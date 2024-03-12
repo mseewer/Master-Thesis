@@ -1,0 +1,1 @@
+Use this folder to store the code belonging to your project.

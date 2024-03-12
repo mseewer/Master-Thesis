@@ -1,0 +1,1 @@
+Use this folder to store documents related to the administration of the project.

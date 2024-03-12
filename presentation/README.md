@@ -1,0 +1,1 @@
+Use this folder to store the slides of the presentation(s) of your project.
