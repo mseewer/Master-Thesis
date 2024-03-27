@@ -35,3 +35,75 @@ TODOs:
 ## 19.03.24
 - https://www.greenbone.net/en/testnow/ -> enterprise trial version
   - By default, the Greenbone Enterprise TRIAL uses the Greenbone Community Feed instead of the more comprehensive Greenbone Enterprise Feed.
+- Checked Anapaya Docs (https://scion.docs.anapaya.net/en/latest/)
+  
+
+- Jordi: Anapaya: 
+  - scionproto for CS
+  - own implementation for BR + SIG (but interoperable with scionproto)
+
+Attack Ideas (also look at Hager chapter 7):
+HW/Firmware:
+  - check passwords complexity
+  - Password of BIOS -> Secure boot?
+  - physical access to devices + their interfaces (USB / network / ... ports)
+- OS:
+  - services/apps running (compare to SCION forensics work)
+  - 2FA?
+  - SSH certificates
+  - File encryption
+  - Logs
+- Filesystem
+  - Check permissions
+- PKI:
+  - where are keys stored? HSM? Redundancy?
+  
+Vulnerability Tools:
+- (We don't need web app scanners)
+- Nessus
+- OpenVAS
+- OpenSCAP (https://www.open-scap.org/download/)
+- nmap -> vulners
+- Vuls (https://github.com/future-architect/vuls)
+- Archery (https://github.com/archerysec/archerysec)
+  - combines multiple open source tools
+    - OpenVAS, OWASP Zap (for web apps), Burp, NMAP Vulners
+    - -> just use openVAs + nmap
+- tsunami security scanner (pre-alpha)
+- Lynis (Lynis was used in Forensics Framework related work)
+- LinPEAS (Priv Esc)
+- InsightVM (Rapid7) -> Nexpose -> See Mail for License Key
+- Qualys
+
+Questions:
+- VPN -> no internet? -> solved!
+- Nessus License? -> use essentials version (free up to 16 IPs)
+- OpenVAS Enterprise Trial? -> Stick to Open Source Version?
+- rsync (port 873 is maybe blocked -> needed to install OpenVAS)
+
+
+TODO:
+- send pk SSH -> DONE
+
+
+## 26.03.24
+DONE: 
+  - Configured Nessus + OpenVAS
+  - Made (un)authenticated scans -> some critical vulnerabilities found
+    - A few exploits/POCs found -> see Findings-Notes.md
+  - Manual investigation of SCION device
+    - Open ports -> Mismatch official docs vs findings (do you have special config?)
+  - LinPEAS (scan freezes)
+    - Check again on offline device if priv esc is possible
+    - https://book.hacktricks.xyz/linux-hardening/privilege-escalation/runc-privilege-escalation
+  - Wrote some line in background section
+
+Questions:
+  - DDoS defense (no Colibri in Anapaya) -> relies on hidden/multi path (not possible in our setup?)
+  - Cyber Alp Retreat 2023
+
+TODO:
+  - LinPEAS on offline device (see above)
+  - Docker Scout + Trivy (https://github.com/aquasecurity/trivy) on offline device (analysis of docker containers)
+  - Inspect docker images offline
+  - Look at appliance in more detail
