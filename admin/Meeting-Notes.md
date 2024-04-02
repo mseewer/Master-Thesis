@@ -107,3 +107,32 @@ TODO:
   - Docker Scout + Trivy (https://github.com/aquasecurity/trivy) on offline device (analysis of docker containers)
   - Inspect docker images offline
   - Look at appliance in more detail
+
+## 02.04.24
+DONE:
+  - Anapaya appliance (poc.py) to interact with the API (GET, PUT, POST requests)
+  - Exported docker image "scion-all" + "appliance"
+  - Used docker scout + trivy to scan the image
+    - scout -> nothing found
+    - trivy -> critical & more vulnerabilities found
+
+QUESTIONS:
+  - SCION Topology (more ASes?)
+  - Move meeting to 10am?
+
+TODO:
+  - run docker on kali machine
+  - Look at SCION code (MAC / Signature algos + their verification)
+  - Router verification of hop fields -> look at open source code (not anapaya implementation for now)
+  - 
+
+## Questions Anapaya:
+- What are these signatures in the Appliance (https://docs.anapaya.net/en/release-v0.35/configuration/api/index.html#tag/signing/operation/post-signatures)
+- Also what are the public signing keys?
+
+
+## 09.04.24
+DONE:
+
+
+
