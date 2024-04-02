@@ -1,0 +1,11 @@
+- Automatic scans with Nessus and OpenVAS (unauthenticated and authenticated)
+    - unauthenticated: Not much findings (just unsafe SSH MAC ciphers can be used / are enabled)
+    - authenticated: Nessus more findings than OpenVAS
+        - couple of exploits / POCs found (see Findings-Notes.md)
+        - mostly kernel related (can be fixed by updating kernel)
+    - LinPEAS (scan freezes when run just in memory (not installed))
+- Manual investigation
+    - Anapaya Appliance can be accessed + modified without authentication/password
+    - Scan for open ports -> Mismatch between official docs and findings (see Findings-Notes.md)
+    - Checked for running services
+    - Docker investigation (with docker scout (nothing found) + trivy (some interesting things))
