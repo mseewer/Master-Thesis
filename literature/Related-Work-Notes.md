@@ -25,7 +25,16 @@ Benjamin Rothenberger. Security Analysis of a Future Internet Architecture. Mast
 COLIBRI -> defend against volumetric attacks
 
 # Hager - SCION unangreifbar und unaufklärbar
-SCION Kommunikation -> Nicht anonym 
+SCION Kommunikation -> Nicht anonym (HORNET ~ Tor for SCION)
+Attacker model (inside of SCION)
+Edge <-> Edge: VPN -> still Packet Sniffing possible (not detectable)
+MitM + changing paths -> not easily possible (have to compromise multiple times SCION-PKI)
+Route Hijacking -> not possible (sender chooses path) -> Need to compromise TRC (Trust Root Configuration)
+AS Spoofing -> difficult (needs valid AS certificate to create valid PCB)
+DDoS -> difficult to do volumetric network attack -> BUT: protocol attack (SYN flooding or application layer attack) still possible
+Suggestions:
+    - Do not use SCION Gate (loose path integrity)
+    - prefer SCION Core / Edge connections
 
 # Silvan - Testbed
 
@@ -59,7 +68,7 @@ TODOs
 
 
 
-# SCION Forensics
+# SCION Forensics - Andreas Maurer
 (sehr viel blabla)
 
 Automatic SCION Security Audit Tool (Based on Lynis)
@@ -68,7 +77,13 @@ SCION hinterlässt sehr wenig Spuren
 
 vieles in VMs
 
-Tripwire als tool (nicht CIS CAT Pro, aber wäre auch gut) -> Lynis gebraucht
+Tripwire als tool intern gebraucht aber nicht in thesis (nicht CIS CAT Pro, aber wäre auch gut) 
+-> Lynis gebraucht in Arbeit
+
+Chapter 5: misconfigs found
+Explains different component + on which services they depend on (Container Bundles)
+Docker should now use Live-Restore (to restore automatically)
+
 
 
 # Anapaya
@@ -94,30 +109,6 @@ Implemented Solutions:
     Integrity between pairs of routers + can authenticate each other (using MD5 but also others hash functions)
     Peers share key -> Encrypt + Add sequence number, PREDECESSOR to messages -> and sign it (using Digital Signature)
         -> complex as the number of peers scales
-
-
-# The Complete Guide to SCION
-Chapter 7 -> Security Analysis
-
-Security Goals:
-    P1 Global connectivity
-    P2 Routing security (routing information can't be altered)
-    P3 absence of kill switches (no global outage)
-    P4 weak / strong detectability (on-path attacker can't disguise presence to subsequent ASes + destination -> strong if entities can detect it too)
-    P5 Beacon authorization
-    P6 path authorization (packets only forwarded along authorized paths)
-    P7 source authentication
-    P8 path transparency + control
-    P9 truthful forwarding (ASes forward packets along the intended path)
-    P10 same as P7 but for end host
-    P11 Packet integrity
-    P12 Path validation
-    P13 Condifdentiality
-    P14 Censorship resilience
-    P15 Anonymity
-Threat Model
-    connectivity + availability between 2 entities can't be guaranteed if no attacker-free path exists
-Has Code-level verification -> on SCIONs border router
 
 
 # In depth analysis of BGP protocol, its security vulnerabilities and solutions
@@ -151,3 +142,34 @@ Still vulnerabilities:
 
 
 # On interdomain routing security and pretty secure BGP (psBGP)
+
+
+
+# The Complete Guide to SCION
+Chapter 7 -> Security Analysis
+
+Security Goals:
+    P1 Global connectivity
+    P2 Routing security (routing information can't be altered)
+    P3 absence of kill switches (no global outage)
+    P4 weak / strong detectability (on-path attacker can't disguise presence to subsequent ASes + destination -> strong if entities can detect it too)
+    P5 Beacon authorization
+    P6 path authorization (packets only forwarded along authorized paths)
+    P7 source authentication
+    P8 path transparency + control
+    P9 truthful forwarding (ASes forward packets along the intended path)
+    P10 same as P7 but for end host
+    P11 Packet integrity
+    P12 Path validation
+    P13 Condifdentiality
+    P14 Censorship resilience
+    P15 Anonymity
+Threat Model
+    connectivity + availability between 2 entities can't be guaranteed if no attacker-free path exists
+Has Code-level verification -> on SCIONs border router
+
+## Interesting
+- ASes can choose own MAC algorithm used on hop field (chapter 4.1.1.5)
+- Hop field authenticator is 6 bytes (48 bit) long (maybe chopchop possible)
+- Router needs to verify packet header (verify all hop fields) + update header information + forward packets (chapter 5.6.3)
+  - must be guaranteed that: segment combination adheres to the rules defined in §5.5
