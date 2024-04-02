@@ -1,2 +1,17 @@
 # Ignore for now -> In the end, push final report
 report/thesis.pdf
+
+report/*.log
+report/*.out
+report/*.toc
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
+report/*.blg
+report/*.bbl
+report/*.aux
+report/sections/*.aux
+
+
+# ignore kali VM files (they should be stored locally anyway)
+workspace/remote
