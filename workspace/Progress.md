@@ -9,3 +9,4 @@
     - Scan for open ports -> Mismatch between official docs and findings (see Findings-Notes.md)
     - Checked for running services
     - Docker investigation (with docker scout (nothing found) + trivy (some interesting things))
+    - default user "anapaya" has sudo rights -> no prompt for password (configured as such in /etc/sudoers)

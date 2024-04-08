@@ -390,3 +390,15 @@ Total: 53 (UNKNOWN: 0, LOW: 12, MEDIUM: 22, HIGH: 12, CRITICAL: 7)
 │           │                  │          │          │                   │                  │ https://avd.aquasec.com/nvd/cve-2010-0928                    │
 └───────────┴──────────────────┴──────────┴──────────┴───────────────────┴──────────────────┴──────────────────────────────────────────────────────────────┘
 
+
+
+
+# SCION code
+
+## Router
+- router/control/conf.go *ConfigDataplane* line 125
+  - checks if key is not zero (not empty key) -> if empty then MAC is never set and gets used later
+  - keys saved on anapaya machine in: /etc/scion/router/64-2_0_2b/keys/
+  - this key is also saved in config json (on appliance) and (I assume) gets created on the file system (like the other config files)
+  - Otherwise MAC algo is always the same: SCION cypto (scrypto) -> scrypto.MAC
+    - pbkdf(masterkey) (SHA256, 1000 iterations) -> 16B key -> AES_128(key) -> 16B block -> CMAC (again AES_128(key) with some additional shifting) -> final MAC value

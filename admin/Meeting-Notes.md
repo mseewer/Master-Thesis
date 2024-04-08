@@ -133,6 +133,9 @@ TODO:
 
 ## 09.04.24
 DONE:
-
+  - look at SCION code (MAC algo for HopField -> need master key -> if not in filesystem -> probably panic)
+  - installed SCION on Kali machine
+  - read in SCION book + code to get more overview -> attack ideas (see Attck-Ideas.md)
+  - Started looking at packet layout / fields
 
 

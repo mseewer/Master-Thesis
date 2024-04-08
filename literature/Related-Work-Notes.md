@@ -172,4 +172,7 @@ Has Code-level verification -> on SCIONs border router
 - ASes can choose own MAC algorithm used on hop field (chapter 4.1.1.5)
 - Hop field authenticator is 6 bytes (48 bit) long (maybe chopchop possible)
 - Router needs to verify packet header (verify all hop fields) + update header information + forward packets (chapter 5.6.3)
-  - must be guaranteed that: segment combination adheres to the rules defined in §5.5
+  - must be guaranteed that: 
+  -  (1) all HFs are verified
+  -  (2) all border routers have access to the necessary forwarding information and verification fields
+  -  (3) that the segment combination adheres to the rules defined in §5.5.
