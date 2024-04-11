@@ -1,3 +1,8 @@
 {
-    "python.analysis.typeCheckingMode": "basic"
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/workspace/custom_scion_packets/scapy-scion-int"
+      ],
+    "python.analysis.extraPaths": [
+      "${workspaceFolder}/workspace/custom_scion_packets/scapy-scion-int"
+    ]
 }

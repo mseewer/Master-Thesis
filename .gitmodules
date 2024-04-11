@@ -1,0 +1,3 @@
+[submodule "workspace/custom_scion_packets/scapy-scion-int"]
+	path = workspace/custom_scion_packets/scapy-scion-int
+	url = https://github.com/lschulz/scapy-scion-int.git

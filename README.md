@@ -51,6 +51,11 @@ section Documentation
 
 ```
 
+# Usage
+1. Clone the repository
+```bash
+git clone --recurse-submodules <repository-url>
+```
 
 # Template for a student project repository
 
