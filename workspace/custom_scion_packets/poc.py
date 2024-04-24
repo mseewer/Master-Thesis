@@ -146,7 +146,7 @@ def fetch_paths(dst_IA: str) -> dict:
     with open("output/paths.json", "w") as f:
         json.dump(paths, f, indent=4)
     # change permissions to allow reading by other users
-    subprocess.run(["chmod", "o+r", "output/paths.json"])
+    subprocess.run(["chmod", "o+rw", "output/paths.json"])
     return paths
 
 
