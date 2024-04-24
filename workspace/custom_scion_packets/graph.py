@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
+from poc import fetch_paths
 
 def add_hop_sequence(G, hop_sequence):
     hops = hop_sequence.split()
@@ -28,6 +29,8 @@ def draw_hop_sequence_graph(G):
     plt.show()
 
 all_seq = []
+dst_IA = "64-2:0:2c"
+fetch_paths(dst_IA) # creates output/paths.json
 
 with open("output/paths.json", "r") as f:
     paths_dict = json.load(f)
