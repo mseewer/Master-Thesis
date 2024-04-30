@@ -133,9 +133,63 @@ TODO:
 
 ## 09.04.24
 DONE:
-  - look at SCION code (MAC algo for HopField -> need master key -> if not in filesystem -> probably panic)
+  - look at SCION code (MAC algo for HopField -> need master key -> if not in filesystem -> probably panic) -> more details: Findings-Notes.md
   - installed SCION on Kali machine
   - read in SCION book + code to get more overview -> attack ideas (see Attck-Ideas.md)
   - Started looking at packet layout / fields
 
+TODO:
+  - CIS guidelines -> passwordless sudo
+  - check MAC on anapaya router
+  - send SCION packets over EDGE device (approaches: SSH, docker, docker proxy)
 
+## 16.04.24
+DONE:
+  - CIS guidelines -> passwordless sudo
+    - See literature/CIS PDF
+    - Chapter 5.4.6 / 5.4.7
+  - Setup SCION on Kali:
+    - Run Dispatcher + Daemon on kali -> configure (add certs, create topology, config)
+    - scion ping etc. -> works
+  - installed scapy for scion (https://github.com/lschulz/scapy-scion-int)
+    - can record + send packets
+    - currently: trying to craft own packets + select own path
+      - need to know which are up/core/down segments
+
+TODO:
+  - Still: check MAC on anapaya router (once own packets can be crafted)
+  - craft own packets + select own path
+
+## 30.04.24
+DONE:
+  - found CIS for ubuntu 22.04 -> Chapter 5.2.5 (Ensure re-authentication for privilege escalation is not disabled globally)
+    - MITRE ATT&CK -> https://attack.mitre.org/techniques/T1548/003/
+  - Path selection:
+    - Use scion showpaths to get paths
+    - User selects/defines path
+    - use scion ping to create proper SCION path (Ping AS, but can set wrong IP address)
+    - use this SCION path in own SCION packets
+  - Path graph visualization
+  - Tried out different packet manipulations
+    - set Segment length of all to 0 -> not working (even though path is valid)
+    - create correct path out of valid paths -> not working (probably due to wrong MAC)
+    - Flag bits + other bits -> not protected by MAC (exploit?)
+    - Intercept + modify path + send + response revert path back -> WORKS (client sees the same response both times)
+    - Add hops infront + send (I assume packet will return until local BR -> checks in router/dataplane.go l. 1389 -> if it is last hop when packet has arrived in dstIA)
+      - double check by sniffing on BR or in Thun -> Question
+  - MAC calculation:
+    - get MAC secret from router + derive key
+    - don't get same result...
+
+Questions:
+  - tshark on anapaya does not see my packets?
+    - exact overview of network (interfaces/IPs)
+  - Security Challenge 2024-02 -> Thun
+  - Nesssus License? (Can't access reports anymore)
+  - Thun access?
+  - MAC -> according to Jordi, they use the same MAC algo
+
+TODO:
+  - MAC?
+  - tshark on anapaya (check if extending path works) or get access to Thun
+  - Analyze new machines
