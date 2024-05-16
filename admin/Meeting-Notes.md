@@ -193,3 +193,27 @@ TODO:
   - MAC?
   - tshark on anapaya (check if extending path works) or get access to Thun
   - Analyze new machines
+
+## 14.05.24
+DONE:
+  - MAC calc is working: Timezone was wrong (-2h -> UTC)
+  - Sudo passwordless only on ZH machine (not in Thun, not on new test machine)
+  - Thun:
+    - can't setup scion on Kali in Thun (need config from Thun anapaya)
+    - Thun anapaya: no special Firewall config
+  - New offline Anapaya machine:
+    - set up Appliance + set basic auth in CLI -> still uses default auth when accessing GUI (= intended)
+    - not accessible outside ZH Wifi
+    - installing over internet works
+  - tshark still not working (nothing captured on anapaya devices)
+  - Nessus:
+    - Compliance check -> see PDF + Findings-Notes.md
+
+
+Questions:
+ - AccessToken for base image ?
+
+TODO:
+  - Attack: SYN flooding
+  - tshark pcap
+  - path extension
