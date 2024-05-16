@@ -41,18 +41,22 @@ libxml2
 - An issue was discovered in libxml2 before 2.11.7 and 2.12.x before 2.12.5. When using the XML Reader interface with DTD validation and XInclude expansion enabled, processing crafted XML documents can lead to an xmlValidatePopElement use-after-free. (CVE-2024-25062) -> https://gitlab.gnome.org/GNOME/libxml2/-/issues/604
 
 
+## Compliance
+- [WRONG] No SYN Cookies -> they are enabled
+  - SYN Flood attack
+
+- No password policy (like minlen)
+
+- password hashing algorithm = SHA512 -> not ideal
+
+- USB Storage Devices are allowed
+
+
 # OpenVAS + NMAP
 - Weak SSH MAC Algorithms Enabled (64 bit MAC)
   - umac-64-etm@openssh.com
   - umac-64@openssh.com
 
-
-# Manual investigation
-SCION version: 0.35.4
-
-Known open ports:
-- SCION: 30041 (dispatcher) and 50000 (source: https://scion-architecture.net/pages/faq/ -> NOT anapaya)
-- default port range we use for SCION interfaces is 30100 - 39999 (https://docs.anapaya.net/en/release-v0.35/resources/ports/)
 
 ## Open ports on the server
 
@@ -402,3 +406,30 @@ Total: 53 (UNKNOWN: 0, LOW: 12, MEDIUM: 22, HIGH: 12, CRITICAL: 7)
   - this key is also saved in config json (on appliance) and (I assume) gets created on the file system (like the other config files)
   - Otherwise MAC algo is always the same: SCION cypto (scrypto) -> scrypto.MAC
     - pbkdf(masterkey) (SHA256, 1000 iterations) -> 16B key -> AES_128(key) -> 16B block -> CMAC (again AES_128(key) with some additional shifting) -> final MAC value
+    - CMAC Reference: https://github.com/dchest/cmac/blob/v1.0.0/cmac.go
+      - New() -> sets key
+      - Write(data) -> actual MAC computation on given data
+      - Sum() -> returns MAC value / digest
+
+
+# Notation
+- Path: "64-2:0:2b#0,1 64-559#24,31 64-2:0:13#31,29 64-15623#11,12 64-3303#20,25 64-2:0:2c#2,0"
+  - IA#ingress,egress interface (0 means start/end of segment)
+
+# Manual investigation
+SCION version: 0.35.4
+
+Known open ports:
+- SCION: 30041 (dispatcher) and 50000 (source: https://scion-architecture.net/pages/faq/ -> NOT anapaya)
+- default port range we use for SCION interfaces is 30100 - 39999 (https://docs.anapaya.net/en/release-v0.35/resources/ports/)
+
+Thun:
+- No special Firewall configured -> easier for SYN Attack or DDos
+
+
+Password Policy
+- min Len = 6
+- no entropy check or history
+
+Syn Flood:
+- Can trigger 1 CPU core to 100% -> on port 443 (not port 80)
