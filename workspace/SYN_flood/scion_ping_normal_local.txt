@@ -1,0 +1,110 @@
+Resolved local address:
+  192.168.111.25
+Using path:
+  Hops: [] MTU: 1472 NextHop: <nil>
+
+PING 64-2:0:2b,192.168.111.1:0 pld=0B scion_pkt=44B
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=0 time=0.742ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=1 time=0.833ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=2 time=0.979ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=3 time=1.006ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=4 time=0.562ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=5 time=0.772ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=6 time=1.153ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=7 time=1.023ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=8 time=0.885ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=9 time=1.098ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=10 time=0.939ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=11 time=1.224ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=12 time=1.048ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=13 time=0.834ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=14 time=0.782ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=15 time=0.710ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=16 time=0.881ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=17 time=0.880ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=18 time=0.957ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=19 time=0.789ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=20 time=1.206ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=21 time=0.842ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=22 time=0.895ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=23 time=0.865ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=24 time=0.637ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=25 time=0.739ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=26 time=0.801ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=27 time=0.816ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=28 time=1.017ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=29 time=0.880ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=30 time=0.654ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=31 time=0.954ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=32 time=0.934ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=33 time=0.511ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=34 time=0.929ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=35 time=1.005ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=36 time=0.791ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=37 time=0.710ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=38 time=0.844ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=39 time=0.782ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=40 time=0.786ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=41 time=0.823ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=42 time=0.871ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=43 time=0.764ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=44 time=1.001ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=45 time=0.888ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=46 time=0.785ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=47 time=0.732ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=48 time=0.822ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=49 time=0.779ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=50 time=0.761ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=51 time=1.078ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=52 time=0.740ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=53 time=0.777ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=54 time=0.761ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=55 time=0.806ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=56 time=0.900ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=57 time=0.823ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=58 time=0.801ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=59 time=0.783ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=60 time=0.819ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=61 time=0.865ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=62 time=0.915ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=63 time=0.886ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=64 time=0.872ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=65 time=1.034ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=66 time=0.855ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=67 time=0.717ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=68 time=0.673ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=69 time=0.562ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=70 time=0.805ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=71 time=0.637ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=72 time=0.898ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=73 time=0.850ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=74 time=0.928ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=75 time=1.052ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=76 time=0.742ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=77 time=0.882ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=78 time=0.848ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=79 time=0.831ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=80 time=0.873ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=81 time=0.890ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=82 time=0.890ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=83 time=0.817ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=84 time=0.857ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=85 time=0.848ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=86 time=0.776ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=87 time=0.861ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=88 time=0.911ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=89 time=2.226ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=90 time=1.011ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=91 time=0.934ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=92 time=0.879ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=93 time=0.917ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=94 time=0.911ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=95 time=0.783ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=96 time=0.792ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=97 time=0.854ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=98 time=0.810ms
+52 bytes from 64-2:0:2b,192.168.111.1: scmp_seq=99 time=0.827ms
+
+--- 64-2:0:2b,192.168.111.1 statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 100037.288ms
+rtt min/avg/max/mdev = 0.511/0.867/2.226/0.184 ms
