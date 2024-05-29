@@ -424,7 +424,7 @@ Known open ports:
 - default port range we use for SCION interfaces is 30100 - 39999 (https://docs.anapaya.net/en/release-v0.35/resources/ports/)
 
 Thun:
-- No special Firewall configured -> easier for SYN Attack or DDos
+- No special Firewall configured -> easier for SYN Attack or DDos?
 
 
 Password Policy
@@ -432,4 +432,21 @@ Password Policy
 - no entropy check or history
 
 Syn Flood:
-- Can trigger 1 CPU core to 100% -> on port 443 (not port 80)
+- Can trigger 1 CPU core to 100% -> on port 443, 30252, 42001 (not port 22, 80)
+- only in ZH, not in THUN (other machine, double the cores / half the memory)
+
+Path extension:
+- works: prepend path, set CurrHF to right index
+- packet arrives at destination, which uses the same invalid path to repy
+- reply packet is dropped by the router at the end of the valid path / start of prepended path
+- this router sends SCMP Parameter Problem back to original destination (but only on smaller packets)
+- Total path length has to be max 64 hops (all segments)
+- ZH -> THUN: 2, 4, 2 hops normally
+  Details
+  - 12 bytes more for every additional hop
+  - Error message size is = same header as original packet (which is total size - payload size) + size of original packet
+  - if error message size is > 1232B -> remove payload bytes until it fits
+  - BUT if not enough payload bytes to remove -> NO error message is sent
+
+Spoofing:
+- Swisscom AS (3303) sends path expired message back but 30 seconds before actual expiration
