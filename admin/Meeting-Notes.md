@@ -217,3 +217,42 @@ TODO:
   - Attack: SYN flooding
   - tshark pcap
   - path extension
+
+## 21.05.24
+DONE:
+- SYN flooding:
+  - SYN Cookies are enabled! (Nessus check was misleading)
+  - SYN flooding attack partially works -> see Findings-Notes.md
+- tshark/tcpdump:
+  - only captures packets with src or dst IP of the machine -> no transit packets
+- Extend path
+  - works (see details Findings-Notes.md)
+  - measure latency + plot it (not significant difference)
+- check robustness of key fetching (comp. DDoS attack)
+  - DRKeys (Packet Authentication)
+  - not available in Anapaya? -> currently checking
+
+Questions:
+- Test machine -> no access (192.168.130.129 not reachable) -> FIXED
+
+
+TODO:
+  - DDoS with BPG impact on SCION
+  - DDoS Control service? or any TLS enabled port (cve-2022-0778) -> check findings
+  - Try out other exploits (BUT not local access required)
+  - source IP / AS spoofing
+  - SYN flood from extern + check appliance version
+
+## 11.06.24
+DONE:
+- TAP works on test machine
+- found reason why not always SCMP parameter problem is return during path extension (see Findings-Notes.md)
+- SYN flood
+  - Thun has older appliance version (v0.34.1) than Zürich (v0.35.4)
+  - measured impact on SCION (only local impact but not extern)
+  - SYN flood from extern only over SCION
+- spoofing
+  - setup Lausanne
+  - IP address spoofing possible (local AS)
+  - script which stores down segments (1 new segment per ~5 min) -> valid for 6h
+  - 
