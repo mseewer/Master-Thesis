@@ -1,0 +1,104 @@
+\chapter{Findings}
+\label{ch:findings}
+
+% * Repeatable, specific description
+% * Provide intuition, key idea
+% * State what the problem is that you want to address in that section
+% * Describe all parts of life cycle: setup, run, maintenance, etc.
+% * Explain with an example (together with the intuition and description, the scheme should have been explained 3 times from different perspectives)
+% * Did we really fully explore the design space?
+%     * Why are simpler solutions inappropriate?
+%     * Explore design alternatives!
+%     * Provide intuition on why certain design choices were taken, why alternatives were rejected
+%     * Describe a strawman approach, show why it's inadequate
+
+
+\section{SCION Protocol}
+
+
+
+
+
+
+\section{Anapaya Router}
+
+
+
+\subsection{Vulnerabilities}
+
+\subsubsection{Docker}
+% libc6 libssl1.1 openssl 1.1.1k
+
+The individual services of the Anapaya router are containerized using Docker, and we analyzed these containers to identify potential vulnerabilities.
+The Docker images are based on Google's distroless Debian 11.1 base image \cite{githubGitHubGoogleContainerToolsdistroless}.
+Such distroless images only contain the necessary dependencies and does not include a full operating system.
+This reduces the attack surface and makes the images more secure.
+However, it was found that this base image still contains unused binaries, such as \texttt{openssl}, its corresponding library \texttt{libssl}, and \texttt{c\_rehash}.
+Furthermore, these binaries are outdated and vulnerable to various security threats, such as command injection, use-after-free, double free, and denial of service attacks.
+To improve the security of these Docker containers, it is recommended to remove these unused binaries by changing the base image to the no-ssl variant of the distroless image (see \cite{githubGitHubGoogleContainerToolsdistroless}).
+
+We also analyzed the libraries that are actually used to run the container and found that \texttt{libc} is outdated and has some vulnerabilities.
+We were not able to directly exploit these vulnerabilities, but it is recommended to update it to the latest version to prevent potential security threats.
+
+
+
+
+
+\subsubsection{Host System}
+
+
+
+\subsection{Ubuntu Compliance}
+We found that the Anapaya router is not fully compliant with the Ubuntu security guidelines.
+Numbers in parentheses in this section refer to the corresponding section in the CIS Ubuntu Linux 22.04 LTS audit.
+Major issues include the following:
+\begin{itemize}
+    \item On two of the three examined routers, there is no password or other re-authentication needed to escalate privileges to root (5.2.4).
+    \item While the systems are configured to only accept at least 6 characters long passwords, there is no password policy in place. For example, password complexity is not enforced (5.3.3.2.3) and also password reuse is not restricted (5.3.3.3.1).
+    \item There is no shell timeout configured, which would log out an inactive user after a certain time (5.4.3.2). By setting a timeout, the risk of unauthorized access to the system can be reduced and also frees up resources associated with the idle session.
+\end{itemize}
+
+
+\subsection{Appliance}
+No authentication for CYD SCION user to access the Appliance.
+Only requires knowledge of IP of the border router.
+Enables change of Border router configuration, such as:
+\begin{itemize}
+    \item change firewall rules
+    \item read and modify SCION forwarding key (used in the MAC calculation for example)
+    \item change DNS and NTP servers
+    \item add new TRC
+    \item Disable router completely
+    \item Add own authentication and lock out other users
+\end{itemize}
+
+
+\subsection{Web Server}
+The appliance is also being served by a web server, and runs on the router.
+It is accessible by any AS-local SCION user or any remote user residing in an AS where a SIG connection is configured.
+The web server used is Caddy, version 2.6.4, dating back to February 2023.
+This version is vulnerable to a denial of service attack, that consumes the routers resources and eventually crashes it, taking down all its services, including SCION!
+This attack is called Rapid Reset and works as follows:
+It uses the HTTP/2 protocol and its feature to open multiple streams within a single TCP connection.
+The attacker misuses this feature by opening a large number of streams at the same time and instantly closing them again.
+By immediately closing the streams after opening them, the attacker ensures that they never exceed the maximum number of streams allowed by the server.
+However, the server still needs to perform substantial work for canceled requests, including allocating memory for a new stream, parsing the query, performing header decompression, and more \cite{googleWorksNovel}.
+
+After modifying the code in this proof of concept attack code \cite{githubGitHubMicrictorhttp2rststream}, we were able to attack our Anapaya router and finally taking it down withing a few seconds.
+The attack even works when the Appliance is configured with authentication, as the web server is not protected by it.
+
+The solution to this problem is to update the Caddy web server to version 2.7.5 or later, which prevents this Rapid Reset attack \cite{githubReleasesCaddyservercaddy}.
+
+
+
+
+\subsection{MAC}
+Check if MAC algorithm is the same as the one that can be found in the open source version.
+For this, we first extracted the master key from the file system and derived a MAC key according to definitions of the open source code.
+With this derived MAC key we calculated the MAC value for a given hop field.
+Our calculation result matched the original MAC value, which proves the usage of the open source MAC algorithm.
+This algorithm is a CMAC and can be considered secure in the sense of unforgeability.
+During a discussion with professor Perrig we found out that the master secret should be refreshed every day to ensure good cryptographic hygiene.
+This, however, is not the case on the Anapaya routers, and it always uses the same value.
+
+

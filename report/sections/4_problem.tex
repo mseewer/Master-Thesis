@@ -1,0 +1,14 @@
+\chapter{Problem Statement}
+\label{ch:problem}
+
+\begin{lstlisting}[language={Go}, morekeywords={}, caption={Pseudocode of hop expiry check in borderrouter.}, label={lst:hop-expiry}]
+func (p *scionPacketProcessor) (*@\textcolor{blue}{validateHopExpiry}@*)() (processResult, error) {
+	expiration := util.SecsToTime(p.infoField.Timestamp).
+        Add(path.ExpTimeToDuration(p.hopField.ExpTime))
+	expired := expiration.Before(time.Now())
+	if !expired {
+        <move on with packet processing>
+    }
+    <send SCMP packet with path expiry (*@error@*)>
+}
+\end{lstlisting}

@@ -17,6 +17,38 @@
 \usepackage[american]{babel}    % Use either American or British English consistently
 \hyphenation{name-space}
 
+\usepackage[
+    n,%orlambda
+    advantage,
+    operators,
+    sets,
+    adversary,
+    landau,
+    probability,
+    notions,
+    logic,
+    ff,
+    mm,
+    primitives,
+    events,
+    complexity,
+    oracles,
+    asymptotics,
+    keys
+]{cryptocode}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+
+\newcommand{\highlight}[1]{%
+  \colorbox{yellow}{$\displaystyle#1$}
+}
+
+
 \newcommand{\thesisTitle}{Security Analysis of the SCION Internet Architecture}
 \newcommand{\thesisType}{Master's Thesis}
 \newcommand{\thesisAuthor}{Marco Georges Seewer}
@@ -40,6 +72,31 @@
 
 \begin{document}
 
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    morekeywords={Element},
+}
+
+\lstset{style=mystyle}
+\lstset{escapeinside={(*@}{@*)}}
+
+
 \frontmatter
 
 \include{title}
@@ -53,14 +110,13 @@
 
 % Add/remove sections as required
 \include{sections/1_introduction}
-\include{sections/2_background}
-\include{sections/3_problem}
-\include{sections/4_design}
-\include{sections/6_implementation}
-\include{sections/7_evaluation}
-\include{sections/8_discussion}
-\include{sections/9_related-work}
-\include{sections/10_conclusion}
+\include{sections/2_related-work}
+\include{sections/3_background}
+\include{sections/4_problem}
+\include{sections/5_methodology}
+\include{sections/6_findings}
+\include{sections/7_discussion}
+\include{sections/8_conclusion}
 
 
 \bibliographystyle{abbrv}
