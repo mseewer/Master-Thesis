@@ -1,0 +1,1 @@
+{"rule":"AS_ADJ_AS","sentence":"^\\QIf the destination application reverses the path information of the initial packet to send the reply, the response will return to the source AS rather than the spoofed one.\\E$"}
