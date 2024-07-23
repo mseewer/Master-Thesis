@@ -22,7 +22,7 @@ The second section focuses on the Anapaya router itself.
 
 
 \subsection{MAC}
-We compared the MAC algorithm used with the one available in the open source version.
+We compared the MAC algorithm used in the Anapaya version of SCION with the one available in the open source version.
 Initially, we extracted the master secret from the file system and derived a MAC key in accordance with the definitions provided in the open source code.
 Using this derived MAC key, we calculated the MAC value for a given hop field.
 Our calculation matched the original MAC value, confirming the use of the open source MAC algorithm.
@@ -78,11 +78,12 @@ However, for this to be used, the DRKey feature must first be enabled by Anapaya
 For a spoofing or also denial-of-service attack, it is advisable to masquerade the source information; otherwise such a malicious source can be easily identified and blocked.
 During our security analysis, we attempted to achieve this by altering and extending the SCION header.
 As presented in the previous section, the source information can be spoofed.
-Leveraging this knowledge, we modified the source to be a different (even made up) AS that is a customer of our AS.
+Leveraging this knowledge, we modified the source to be a different (even made up) AS.
 Additionally, we prepended the path header with extra hop fields and set the hop field index to the correct value.
-The packet was successfully transmitted to the destination, which reverted the path information and sent the reply back to our AS.
+These modifications make it appear as if the packet was sent by a customer of our AS.
+The modified packet was successfully transmitted to the destination, which reverted the path information and sent the reply back to our AS.
 This demonstrates that the path header can be extended with additional and invalid hop fields, allowing for the spoofing of the AS that originated the connection.
-Implementing a simple check to filter packets with a hop field index is zero (i.e. pointing to the first hop) for packets originated from AS-local end hosts would mitigate this issue.
+Implementing a simple check to filter packets with a hop field index set to zero (i.e. pointing to the first hop) for packets originated from AS-local end hosts would mitigate this issue.
 However, this check does not protect against malicious ASes.
 To address this threat, source authentication (e.g. SPAO) would be once again be an effective solution.
 But again, this feature and DRKey are unfortunately not enabled in the Anapaya routers.
@@ -108,7 +109,7 @@ This simple evaluation demonstrates that the impact of extending the path to its
 This section addresses the modification of the path header by an on-path attacker rather than by the source.
 This attack is also discussed in section 7.6.1 of the SCION book \cite{Perrig2022} and works as follows:
 An attacker intercepts a SCION packet and modifies the path header by replacing path segments as desired.
-The packet is then forwarded along the attacker chosen path rather than the original path inteded by the sender.
+The packet is then forwarded along the attacker chosen path rather than the original path intended by the sender.
 These modifications can be reverted by the adversary in replies from the destination (e.g. when the destination inverts the path header to reply), making the sender unaware of the attack.
 Our analysis within the CYD SCION network confirmed the feasibility of this attack.
 
@@ -133,14 +134,14 @@ This section deals with the security related findings of the Anapaya routers.
 
 \subsection{Secure Shell (SSH)}
 The Anapaya routers are accessed via SSH.
-All three routers analyzed employ public key authentication and do not allow password authentication.
+All three routers deployed at the CYD Campus employ public key authentication and do not allow password authentication.
 This is considered a robust security practice, as public key authentication is more secure than password authentication.
 This is due to the higher entropy of key compared to passwords, and the fact that keys are not transmitted over the network.
 However, our analysis identified some shortcomings with the SSH configuration that could be improved:
 
 \begin{itemize}
-    \item Various algorithms use elliptic curves cryptography (ECC) on curves that are believed to have been compromised by the National Security Agency (NSA) \cite{TODO}.
-    \item Some MAC algorithms use the broken SHA1 hash function.
+    \item Various algorithms use elliptic curves cryptography (ECC) on curves that are believed to have been compromised by the National Security Agency (NSA) \cite{nist1_safecurves}.
+    \item Some MAC algorithms use the broken SHA1 hash function, which potentially allows for collision attacks.
     \item The chacha20-poly1305@openssh.com cipher is enabled, which is susceptible to the Terrapin attack (CVE-2023-48795).
     This attack allows message prefix truncation, which enables an attacker to downgrade the security of a connection.
     \item A key exchange algorithm based on Diffie-Hellman group 14 is enabled. It uses a 2048-bit modulus, but only provides 112 bits of security.
@@ -384,5 +385,5 @@ The recommended solution to mitigate this vulnerability is to update the Caddy w
 It is crucial to keep the software up-to-date to mitigate potential security threats.
 The Anapaya routers should be updated regularly to ensure that the latest security patches are applied.
 In May 2024, CYD bought and received a new Anapaya Router.
-The system and SCION software version on this new device were outdated and contained the software releases of autumn 2023 (end of September and mid of October).
+The system and SCION software versions on this new device were outdated and contained the software releases of autumn 2023 (end of September and mid of October).
 An improvement on Anapaya's side would be to ship the routers with a more recent software version, ideally the latest release.
