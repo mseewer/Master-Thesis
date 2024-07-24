@@ -25,6 +25,11 @@ Benjamin Rothenberger. Security Analysis of a Future Internet Architecture. Mast
 COLIBRI -> defend against volumetric attacks
 
 # Hager - SCION unangreifbar und unaufklärbar
+(03.24)
+Mehr generell gehalten aber nicht konkret die Systeme angeschaut
+(e.g.: Regelmässige Aktualisierung mit den neusten Patches
+und Sicherheitsupdates)
+
 SCION Kommunikation -> Nicht anonym (HORNET ~ Tor for SCION)
 Attacker model (inside of SCION)
 Edge <-> Edge: VPN -> still Packet Sniffing possible (not detectable)
@@ -37,7 +42,7 @@ Suggestions:
     - prefer SCION Core / Edge connections
 
 # Silvan - Testbed
-
+setup CYD testbed
 Packet reordering -> affect performance of SCION IP Gateway (SIG)
 Network Tap device -> subset of Dolev-Yao model
 Edge device -> Interconnection SCION<->IP
