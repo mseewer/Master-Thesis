@@ -248,11 +248,128 @@ DONE:
 - TAP works on test machine
 - found reason why not always SCMP parameter problem is return during path extension (see Findings-Notes.md)
 - SYN flood
-  - Thun has older appliance version (v0.34.1) than Zürich (v0.35.4)
+  - Thun has older appliance version (v0.34.1) than Zürich+Lausanne (v0.35.4)
+    - only Zürich seems to be vulnerable (high CPU usage)
   - measured impact on SCION (only local impact but not extern)
-  - SYN flood from extern only over SCION
+  - SYN flood from extern only over SCION (but also CPU impact)
 - spoofing
   - setup Lausanne
   - IP address spoofing possible (local AS)
   - script which stores down segments (1 new segment per ~5 min) -> valid for 6h
-  - 
+  - (Core) ASes don't forward packets with path expiry in 30 sec or less
+  - No egress (outbound) spoofing protection = no egress filtering
+- Presentation
+- Appliance access:
+    {
+      "comment": "accept from keen public range",
+      "rule": "ip saddr 146.148.116.135 counter accept", -> wireguard endpoint
+      "sequence_id": 4
+    },
+    {
+      "comment": "accept from keen private range",
+      "rule": "ip saddr 198.18.0.0/15 counter accept", -> wireguard subnet 
+      "sequence_id": 5
+    },
+    {
+      "comment": "accept from office range",
+      "rule": "ip saddr 84.253.61.72/29 counter accept", -> office anapaya??
+      "sequence_id": 6
+    },
+- Started looking at exploits:
+  - Jumbo packets (9000B) can cause DoS (but MTU is only at 9000B on scion-gateway interface)
+  - x509 policy check can lead to DoS (code does not check for policies)
+
+
+Questions:
+- Jordi Teams Link
+- Nessus License?
+
+TODO:
+- Try out other exploits (BUT not local access required)
+  - what if some need interaction with Core AS?
+- SCION access from ETH (wait on Jordi)
+- DDOS
+
+## 25.06.24
+DONE:
+- Docker container scion
+  - openssl binary + library are outdated + vulnerable (see Findings-Notes.md)
+- Thun has some weaknesses
+- VM at ETH with access to SCION (can ping CYD)
+
+
+## 05.07.24
+DONE:
+- Started writing:
+  - Findings
+  - related work
+- Add Nessus Scan Result (Vulnerabilities + Compliance) to Repo (as HTML, PDF or CSV)
+- libc vulnerabilities: check if vulnerable function in use (in Docker containers) 
+  - -> No
+  - linker vulnerability should be possible but needs local access
+- Web server (caddy) -> Crash -> See Findings-Notes.md
+  - tried to trigger it over SCION -> not working (no response)
+- Structure report:
+  - abstract
+  - acknowledgements
+  - introduction
+  - literature review / related work (andreas maurer)
+    - justification of work
+  - background / SCION
+    - SCION (technical overview)
+    - Anapaya
+    - Pentesting (generell Tools)
+  - Problem statement
+    - what is the problem that we address?
+    - Attacker models
+  - Methodology:
+    - environment
+      - 3 CYD locations (+ETH?)
+      - 
+    - types of attack vectors (device, network, SCION)
+    - tools + technologies (Nessus, OpenVAS, Docker, wireshark, scapy, scion)
+  - implementation
+    - what was coded and how?
+  - Results / Findings
+  - discussion
+    - compare to related work
+    - future work?
+    - implications / limitations
+  - conclusion
+
+Question:
+- Declaration of originality -> Roland (3rd option)
+
+TODO:
+- Entwurf für anapaya (wesentliche findings)
+- HTTP server crash (caddy) -> check if it can be triggered over SCION
+
+
+## 16.07.24
+DONE:
+- Declaration of originality (Jordi okay mit 3. Option)
+- Anapaya Entwurf
+
+
+
+TODO:
+- Prepare DOS attack (need IPs of CYD, SWITCH?, tool to measure scion bandwidth + scion latency (scion bwtester + scion ping))
+- anapaya sections for their statements to findings
+
+
+## 23.07.24
+DONE:
+- Test device -> double-checked if authentication was set -> it was not (no default)!
+- almost done with Findings
+
+Questions:
+- How to cite/reference to scan report?
+
+TODO:
+- make precise overview on how to structure thesis report
+- write
+- DDoS attack
+- rerun Nessus scan after update
+
+## 30.07.24
+DONE:
