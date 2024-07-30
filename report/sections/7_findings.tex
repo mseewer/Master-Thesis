@@ -129,12 +129,11 @@ TODO
 
 
 \section{Anapaya Router}
-This section deals with the security related findings of the Anapaya routers.
+This section deals with the security related findings of the three operational Anapaya routers at the CYD Campus.
 
 
 \subsection{Secure Shell (SSH)}
-The Anapaya routers are accessed via SSH.
-All three routers deployed at the CYD Campus employ public key authentication and do not allow password authentication.
+The Anapaya routers are accessed via SSH with public key authentication and do not allow password authentication.
 This is considered a robust security practice, as public key authentication is more secure than password authentication.
 This is due to the higher entropy of key compared to passwords, and the fact that keys are not transmitted over the network.
 However, our analysis identified some shortcomings with the SSH configuration that could be improved:
@@ -352,7 +351,7 @@ This configuration allows users to make significant changes to the border router
     \item Changing DNS and NTP server settings
     \item Adding new TRCs
     \item Completely disabling the router
-    \item Adding custom authentication options and potentially lock out other users
+    \item Adding custom authentication options and potentially lock out other users from accessing the appliance
 \end{itemize}
 
 This lack of authentication was also present on the test device, which shows that no default authentication is set up.
