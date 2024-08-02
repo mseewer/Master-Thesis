@@ -1,14 +1,81 @@
 \chapter{Problem Statement}
 \label{ch:problem}
 
-\begin{lstlisting}[language={Go}, morekeywords={}, caption={Pseudocode of hop expiry check in borderrouter.}, label={lst:hop-expiry}]
-func (p *scionPacketProcessor) (*@\textcolor{blue}{validateHopExpiry}@*)() (processResult, error) {
-	expiration := util.SecsToTime(p.infoField.Timestamp).
-        Add(path.ExpTimeToDuration(p.hopField.ExpTime))
-	expired := expiration.Before(time.Now())
-	if !expired {
-        <move on with packet processing>
-    }
-    <send SCMP packet with path expiry (*@error@*)>
-}
-\end{lstlisting}
+This chapter presents the problem statement of this thesis.
+It discusses the security challenges that SCION faces, including the threat model and the impact of attacks.
+Finally, it presents the objectives of this thesis.
+
+\section{Fundamental Problem}
+\label{sec:fundamental-problem}
+In released software products it is estimated that they contain between 1 and 25 errors per 1000 lines of code \cite{McConnell2004}.
+Despite the SCION protocol being publicly known, investigated by the research community, and partially formally verified \cite[7, 22, 23]{Perrig2022}, there remains a risk of vulnerabilities in the protocol and especially its implementation.
+This risk is heightened in the SCION product sold by Anapaya, which is closed-source and modified to meet industry requirements.
+Unlike the open-source version, which relies solely on software for its data plane processing, Anapaya's SCION product uses several acceleration technologies \cite{anapayaPerformanceOptimizations}.
+These modifications could introduce new vulnerabilities that are not present in the open-source version, eluding the thorough analyses conducted previously.
+
+Even if the implementation of SCION were flawless and contained no bugs, its security would be rendered meaningless if the devices running the software were not properly secured.
+Insecure devices could be compromised, undermining the integrity of SCION itself.
+Potential attacks include disruption of SCION communication, packet manipulation, and data exfiltration.
+Moreover, attackers could silently update the SCION software to a malicious version containing backdoors or other vulnerabilities, enabling undetected compromises of the entire network.
+
+Given that Anapaya sells devices running their version of SCION, ensuring the security of these devices is crucial.
+This is especially important since these devices are deployed in production environments, making them attractive targets for attackers.
+Proper security measures must be in place to protect these high-value targets from potential threats.
+
+
+
+\section{Attacker Models}
+This section covers potential attacker models, their capabilities, and the specific threats they pose to the SCION network and its implementation.
+
+\subsection{Malicious SCION End Host}
+A malicious SCION end host refers to an adversary with legitimate access to the SCION network who operates an endpoint within an AS.
+This attacker can generate, send, and receive SCION packets, potentially exploiting weaknesses in the protocol or its implementation.
+Such an attacker could attempt to manipulate packet headers, inject malicious payloads, or exploit known vulnerabilities in the SCION software.
+Additionally, they could exploit misconfigurations or weak security controls on SCION services running in the AS.
+By doing so, they might disrupt communication, corrupt data integrity, or exfiltrate sensitive information.
+The threat posed by a malicious end host is significant due to their legitimate access and ability to masquerade malicious activities with regular network traffic.
+
+\subsection{On-path Attacker}
+An on-path attacker, also known as a man-in-the-middle (MitM), is positioned on the communication path between two SCION entities.
+They are capable of intercepting, monitoring, blocking, replaying, and modifying packets in transit.
+On-path attackers can exploit weaknesses in the SCION protocol to redirect traffic, conduct traffic analysis, or inject malicious data into the communication stream.
+They can also carry out sophisticated attacks such as session hijacking and traffic manipulation.
+The impact of an on-path attacker can be severe, leading to compromised confidentiality, integrity, and availability of communications.
+
+\subsection{Off-path Attacker}
+An off-path attacker does not have direct access to the communication path between SCION nodes but can still attempt to disrupt or compromise communications through indirect means.
+This attacker might use techniques such as spoofing, reflection attacks, or exploiting vulnerabilities in routing protocols to influence the SCION network.
+Although they lack the direct interception capabilities of an on-path attacker, off-path attackers can still cause significant disruptions by misleading network elements, redirecting traffic, or causing congestion.
+The effects of an off-path attacker include potential network outages, reduced performance, and indirect data compromise.
+
+\subsection{External Attacker (no SCION access)}
+An external attacker without SCION access represents a threat actor who can not directly interact with the SCION network.
+Such an attacker might target the physical infrastructure supporting the SCION network, including routers, servers, and other hardware components.
+They could exploit vulnerabilities in the underlying operating systems, firmware, or hardware to disrupt SCION operations or compromise the network.
+Additionally, they could attempt to disrupt the network through distributed denial-of-service (DDoS) attacks, aiming to exhaust resources and render the network unavailable to legitimate users.
+The threat from external attackers is significant as they can cause widespread disruptions, impacting the availability and performance of the SCION network.
+
+
+
+\section{Thesis' Objectives}
+As mentioned in \cref{sec:fundamental-problem} the security of Anapaya's version of SCION mostly depends on the security of their modified SCION data plane implementation and of the devices they sell.
+This thesis aims to improve the security of Anapaya's SCION product by addressing the following objectives:
+
+\begin{itemize}
+        \item \textbf{Security of Operational Devices:}
+        An in-depth security assessment of the devices running Anapaya's version of SCION will be performed.
+        This includes identify potential vulnerabilities and provide recommendations for mitigating these risks.
+        A particular emphasis will be placed on attack vectors that can be exploited by remote attackers who do not have direct access to the devices (i.e., do not have physical access nor login credentials).
+
+        \item \textbf{SCION network in use:}
+        An evaluation of the SCION implementation used in Anapaya's products will be carried out to identify any weaknesses or vulnerabilities that could be exploited by attackers.
+        We consider the attacker models presented in \cref{sec:fundamental-problem} and assess the impact of potential attacks on the SCION network.
+        The goal is to provide insights into the security of the SCION protocol and its implementation in real-world scenarios.
+
+        \item \textbf{Impact of Normal Internet on SCION:}
+        The last objective of this thesis is to investigate the interaction between the SCION network and the traditional Internet, focusing on the potential security implications.
+        This includes analyzing how the SCION network is affected by attacks originating from the normal Internet and determine how it can be protected against such threats.
+\end{itemize}
+
+
+

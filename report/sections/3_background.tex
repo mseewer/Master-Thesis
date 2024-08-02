@@ -9,7 +9,7 @@
 
 This chapter provides important background information on the SCION Internet architecture, which is the main components of this security analysis.
 It starts by introducing SCION and its core concepts and services, as well as its control and data plane.
-Additionally, some security aspects of SCION and the company Anapaya are discussed.
+Additionally, some security aspects of SCION and the proprietary SCION version provided by the company Anapaya are discussed.
 In \cref{sec:security_testing}, we will explore different security testing methods and tools that are used to identify vulnerabilities in systems.
 
 
@@ -25,7 +25,7 @@ Unless otherwise stated, the background information presented here is primarily 
 In the following we explain SCION's core features and how it achieves them.
 \subsubsection{Isolation}
 
-By grouping different autonomous systems (ASes) into isolation domains (ISDs), as shown in \cref{fig:scion_isd_architecture}, SCION provides isolation between them.
+By grouping different autonomous systems (ASes) into isolation domains (ISDs), as shown in \cref{fig:scion_isd_architecture}, SCION provides both fault and trust isolation.
 Each ISD contains core ASes that administer the ISD, form the root of trust of the ISD, and provide connectivity to other ISDs.
 The configuration of an ISD is stored in a signed file called trust root configuration (TRC), which includes for example root certificates or policies.
 If a misconfiguration occurs in an ISD, only that ISD is affected and the rest of the Internet can continue to operate.
@@ -369,9 +369,9 @@ K_{B:S_B \rightarrow A} &= \text{PRF}_{K_{B \rightarrow A}}(1 \parallel S_B)
 \end{align*}
 
 $H_A$ and $S_B$ are the host and server addresses, respectively.
-Finally, the third level (host-to-host) key can be derived:
+Finally, the third level (host-to-host) key can be derived using the host-to-AS key and by applying the PRF to the slow host's address:
 \begin{align*}
-    K_{B:S_B \rightarrow A:H_A} = \text{PRF}_{K_{B:S_B \rightarrow A}}(H_A) = \text{PRF}_{K_{B \rightarrow  A:H_A}}(S_B)
+    K_{B:S_B \rightarrow A:H_A} = \text{PRF}_{K_{B:S_B \rightarrow A}}(H_A)
 \end{align*}
 
 The secrete value $SV$ can be different for different protocols and applications.

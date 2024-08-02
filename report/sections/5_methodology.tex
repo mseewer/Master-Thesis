@@ -1,16 +1,80 @@
 \chapter{Methodology}
 \label{ch:methodology}
 
-In the service offer to armasuisse, SWITCH explicitly states that the
-existing IP connection and the new SCION connection are physically separated.
-Sunrise and Swisscom guarantee access to their internet backbone without further
-details on the connection. Sunrise provided the most details about the service
-offering. In Zürich and Thun, the SCION links are connected to Cisco routers on
-site, from where they are connected to the appliance, taking a total of 2 standard
-height units of rack space. This is the standard deployment of SCION services
-provided by SWITCH and Swisscom.
+This chapter outlines the methods used to analyze the security and potential vulnerabilities of the Anapaya version of SCION.
+The general approach is described in \cref{sec:general-approach}, followed by the concrete setup used in the assessment in \cref{sec:setup}.
+Finally, in \cref{sec:analysis-methods-tools}, specific methods and tools used are presented in more detail.
 
-\cite{Hager2024}
 
+\section{General Approach}
+\label{sec:general-approach}
+The general approach of this thesis focuses on a comprehensive analysis of the security features and potential vulnerabilities of the Anapaya version of SCION.
+Given the proprietary nature of Anapaya SCION, this research employs a combination of exploratory and analytical approaches.
+
+\subsection{Exploratory Approach}
+The exploratory approach is utilized in this research to address the limited public knowledge about the Anapaya version of SCION.
+As Anapaya SCION incorporates proprietary modifications that are not fully documented, an exploratory approach is essential for uncovering and understanding these new or undocumented features.
+The exploratory phase involves conducting preliminary investigations to identify potential vulnerabilities, security features, and other relevant aspects of the Anapaya SCION implementation.
+This includes a review of available documentation, security scans, and configuration checks to gather initial data on the system.
+
+These early finding from exploratory efforts will guide the subsequent analytical phase of the research, providing a foundation for more in-depth analysis and testing.
+
+\subsection{Analytical Approach}
+The analytical approach is employed to systematically evaluate and interpret the security characteristics identified during the exploratory phase.
+This approach is crucial for conducting a detailed analysis of the security mechanisms and potential vulnerabilities within the Anapaya SCION environment.
+It involves a detailed examination of the identified security mechanisms, potential vulnerabilities, and their implications for the overall security of the Anapaya SCION network.
+The goal is to move beyond initial discovery to a deeper understanding and rigorous assessment of security aspects.
+
+
+\section{Setup}
+\label{sec:setup}
+The security analysis is conducted against the Anapaya devices running at CYD Campus locations.
+A simplified network setup is shown in \cref{fig:network-setup}.
+Each CYD Campus location forms its own AS with a dedicated Anapaya Edge device.
+These three ASes are connected via three different Core ASes to the SCION production network.
+In each of these CYD Campus ASes, we deploy a Kali virtual machine (VM), that runs the SCION end host code, enabling interaction with the SCION network.
+At ETH Zürich, SCION access extends beyond the CYD Campus, where we operate an additional Kali VM.
+To assess the influences of the traditional Internet on SCION, we also have access to a non-SCION VM in the ETH Zürich network.
+According to the service offer from SWITCH the traditional Internet and SCION connection in Zürich are physically separated.
+At the other CYD Campus locations, no such separation information is provided.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figures/scion_setup2.drawio.png}
+    \caption{Network Setup during the Security Assessment}
+    \label{fig:network-setup}
+\end{figure}
+
+Additionally, apart from these operational devices, CYD Campus acquired another Anapaya device.
+It is not part of the SCION production network and only used for offline testing purposes.
+
+\section{Analysis Methods and Tools}
+\label{sec:analysis-methods-tools}
+This section outlines the methods and tools used to conduct the security analysis of the Anapaya SCION devices.
+
+\subsection{Automatic Scans}
+To conduct our exploratory analysis, we employ automated scanning tools to identify potential vulnerabilities and security weaknesses in the Anapaya SCION devices.
+The popular tools \textbf{Nessus} and \textbf{OpenVAS} give an initial overview of the security posture of the devices by scanning for known vulnerabilities and misconfigurations.
+Nessus is also being used to perform a compliance audit to check if the devices adhere to security best practices and standards, such as CIS benchmarks.
+An \textbf{SSH audit} is conducted to identify potential weaknesses in the SSH configuration of the devices.
+Furthermore, running software and services are analyzed using tools like \textbf{systemd-analyze} \cite{systemdAnalyze} and \textbf{Docker Trivy} \cite{trivy}.
+
+
+\subsection{Manual Investigations}
+Complementing the automated scans, manual investigations include reviewing the findings from the automated tools and conducting in-depth analysis of specific areas.
+Additionally, also from the automated scans uncovered software and configuration are manually reviewed.
+
+Apart from the device itself, everything related to the SCION protocol is manually checked.
+This includes the SCION management system, and all SCION network interactions.
+How we capture and analyze these interactions is described in the next section.
+
+
+\subsection{Data Collection and Modification}
+During the security analysis, network packets are generated, captured, analyzed, and modified.
+This is done to observe and reason about network flows, for example to check if a reflection attack worked or not.
+Furthermore, if our generated packets cause SCMP error messages, we can reason about the correct behavior or can also use this information to analyze and revise our generated packets.
+We use \textbf{Wireshark/tshark} \cite{wireshark} for packet capture because there already exists a SCION plugin for Wireshark, which allows us to dissect SCION packets \cite{wiresharkSCION}.
+To generate and modify SCION packets, the tools \textbf{scapy} \cite{scapy} with its SCION extension \cite{scapySCION} are used.
+It allows to easily define correctly formatted SCION packets and modify them as needed.
 
 

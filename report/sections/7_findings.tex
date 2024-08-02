@@ -64,6 +64,24 @@ Depending on the application this could lead to a forced path lookup based on th
 However, during our analysis, we observed that the Anapaya border router implementation drops network packets that have a path information that is going to expire in the next 30 seconds or less.
 Unless an application requires more than 30 seconds to respond, a forced path lookup with nearly expired path information is prevented.
 
+This is a significant divergence from the open-source implementation.
+As illustrated in the pseudocode below, the open-source implementation only checks if the packet has expired based on the current time.
+It does not account for the 30 additional seconds as observed in the Anapaya implementation.
+
+
+\begin{lstlisting}[language={Go}, morekeywords={}, caption={Pseudocode of hop expiry check in open-source implementation of the border router.}, label={lst:hop-expiry}]
+func (p *packetProcessor) (*@\textcolor{blue}{validateHopExpiry}@*)() (processResult, error) {
+    expiration := util.SecsToTime(p.infoField.Timestamp).
+        Add(path.ExpTimeToDuration(p.hopField.ExpTime))
+    expired := expiration.Before(time.Now())
+    if !expired {
+        <move on with packet processing>
+    }
+    <drop packet + send SCMP packet with path expiry (*@error@*)>
+}
+\end{lstlisting}
+
+
 To mitigate these vulnerabilities, we recommend adding egress source filtering to the border router implementation.
 This measure would prevent malicious end hosts from performing such spoofing attacks.
 Additionally, outbound filtering also directly enhances security for AS customers \cite[Section 7.7.3]{Perrig2022}, providing even higher incentives for ASes to perform egress filtering.
