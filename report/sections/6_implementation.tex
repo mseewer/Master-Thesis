@@ -3,3 +3,109 @@
 
 % Describe the architecture of your implementation and explain the choices you made.
 % Why did you use library X instead of Y?
+
+In this chapter we present our implementation of the different components that we used to conduct our experiments.
+We will first describe the setup and configuration of the Kali machines, as well as the use of the open-source SCION implementation.
+Subsequently, in \cref{sec:impl:SCIONpackets}, we will explain the processes for generating and modifying SCION packets.
+\cref{sec:impl:attackerModel} details the implementation of the different attack models.
+Finally, \cref{sec:impl:VolumetricDoS} explains how we conducted the volumetric denial-of-service attack.
+
+\section{Kali Machines}
+
+The Kali virtual machines mentioned in \cref{sec:setup} contain numerous tools and software for performing different penetration tests.
+We upgraded these machines to include all the additionally needed programs that were listed in \cref{sec:analysis-methods-tools}.
+
+To interact with SCION, we installed the SCION end host stack on the Kali machines.
+This stack includes a general \texttt{scion} helper binary, the SCION dispatcher, and the SCION daemon, all of which we built from the open-source code.
+The \texttt{scion} binary is a tool that facilitates interaction with the SCION network.
+It can be used to send SCMP echo requests (i.e, SCION pings) or perform traceroutes to a specific destination.
+The binaries require configuration files to connect to the SCION network.
+For example, the addresses and interfaces of the AS-local border routers must be known, or the TRC of the whole ISD is required.
+We extracted the necessary configuration files from the Anapaya SCION devices, copied them to the Kali machines, and attempted to run the SCION end host stack.
+This attempt was unsuccessful because Anapaya uses a different format for the configuration files than the open-source SCION implementation.
+After some manual adjustments, we managed to get the dispatcher and daemon running and connected to the SCION production network.
+
+At this point, we were capable of sending and receiving SCION packets to and from any other SCION device in the network.
+Additionally, this setup allowed us to fetch all possible path information to a specific destination using the \texttt{scion} binary with the \texttt{scion showpaths} command.
+
+
+\section{Open-Source SCION}
+We utilize the open-source code not only to build the end host stack, but also to verify the behavior of the Anapaya's proprietary SCION implementation.
+By leveraging the open-source code, we can validate certain hypotheses and determine if specific features are implemented identically or modified by Anapaya.
+
+
+\section{SCION Packets}
+\label{sec:impl:SCIONpackets}
+Typically, SCION packets are not directly accessible to the user as they are generated and send by a SCION application, such as the \texttt{scion} binary.
+However, for our experiments, we needed to generate and modify custom SCION packets.
+The Python library \texttt{scapy}, with its SCION extension, facilitates this process.
+It allows stacking different headers on top of each other and defining every field of them.
+This capability enabled us to generate SCION packets with custom payloads and headers.
+To send and receive SCION packets, \texttt{scapy} does not even require a running SCION dispatcher or daemon.
+Nonetheless, in our implementation, we use the SCION end host stack to fetch the path information, which we then use to generate SCION packets with valid path headers.
+
+
+
+
+\section{Attacker Models}
+\label{sec:impl:attackerModel}
+
+This section outlines the implementation of the different attacker models.
+Their individual capabilities are described in \cref{sec:attacker-models}.
+
+\subsection{Malicious SCION End Host}
+We used the Kali machines to simulate a malicious SCION end host.
+These machines are integrated into the SCION network and are capable of sending and receiving SCION packets.
+This enables us to generate and dispatch custom, potential maliciously crafted, SCION packets and to other SCION devices, using the approach mentioned previously in \cref{sec:impl:SCIONpackets}.
+Since the Kali machines can also receive and analyze SCION packets, we can verify whether the packets are correctly received and processed by the target devices.
+This process allows us to assess whether the target devices are vulnerable to the specific attack.
+Additionally, we also have access to our target devices, including all three operational Anapaya SCION devices, to evaluate the impact of potential attacks.
+
+Moreover, the Kali machines are used to fetch and store path information for future use.
+This is necessary because path information is frequently updated and removed, despite the paths remaining valid and not yet expired.
+By preserving these path information, we can later send SCION packets with valid path headers (i.e., with correct MAC values) but with potentially expired hop fields.
+
+
+\subsection{On-path Attacker}
+A logical approach to implementing an on-path attacker would involve utilizing the three operational Anapaya SCION devices at the CYD Campus locations.
+These devices are present on each path between our SCION end hosts (i.e., Kali machines) and any other reachable SCION device within the network.
+This would enable us to intercept, monitor, block, replay, and modify packets in transit.
+However, employing these devices would affect other SCION users and their connections.
+Due to ethical and legal concerns, we opted against using the Anapaya devices for our experiments.
+Moreover, even in the absence of these concerns, implementing an on-path attacker on these devices would be challenging, particularly due to the need for custom software installation.
+
+Instead, again the Kali machines are used to simulate an on-path attacker.
+We configure a socket through which an end host can send and receive SCION packets.
+On the same machine, a custom Python script operates on the other side of the socket to simulate the on-path attacker.
+In the absence of an attack, this script simply forwards received SCION packets to the border router and sends the corresponding response back to the end host via the socket.
+During an attack, the script has the capability to modify, save, or drop both incoming and outgoing SCION packets.
+
+
+\subsection{Off-path Attacker}
+
+The CYD Campus SCION setup, comprising three distinct locations and three separate ASes, facilitates the simulation of an off-path attacker.
+In this setup, one location is designated as the attacker, while the other two serve as potential victims.
+The attacker is capable of sending SCION packets to the victims but lacks direct access to the communication path between the two.
+This way, we can realistically implement an off-path attacker within the SCION production network.
+Typically, a Kali machine is employed to simulate an end-host off-path attacker.
+In certain scenarios, we also consider the Anapaya device within the attacker's AS as malicious, thereby simulating a fully malicious AS that operates off-path.
+
+\subsection{External Attacker (no SCION access)}
+To simulate an external attacker without SCION access, we could utilize any device that is not connected to the SCION network.
+For this purpose, we selected a device connected to the traditional Internet and located outside the CYD Campus.
+ETH Zürich provided a virtual machine, which allows us to conduct our attacks.
+An advantage of this setup is that both ETH Zürich and the CYD Campus in Zürich share the same Internet service provider, SWITCH.
+This allows for simpler coordination of specific attacks, such as volumetric denial-of-service attacks.
+
+
+\section{Volumetric DoS Attack}
+\label{sec:impl:VolumetricDoS}
+As mentioned in the previous section, we used the external attacker to simulate a volumetric denial-of-service attack.
+
+We used \TODO{TRex/Iperf3} to generate a high amount of traffic towards to CYD Campus location in Zürich.
+
+To measure the impact on SCION, we use the following two SCION tools:
+From Thun we use \texttt{scion ping} to check if the SCION AS is still reachable.
+Additionally, to measure how much bandwidth is still available, we use the \texttt{scion-bwtester} tool \cite{Scionappsbwtester}.
+We chose to make these SCION measurements from Thun, because has a better network infrastructure, for example Thun has a higher bandwidth available than Lausanne (10 Gbit/s vs. 1 Gbit/s).
+
