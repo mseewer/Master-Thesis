@@ -11,3 +11,93 @@
 % * Limitations: what can’t the results tell us?
 %     * Are there deployment issues and how are they overcome?
 
+
+In this chapter, we describe the wider meaning and implications of our findings.
+It also discusses the limitations of our work and provides recommendations for Anapaya and SCION deployments in general.
+Finally, we outline potential future work that can build on our analysis.
+
+
+\section{Interpretations and Implications}
+The use of a secure MAC algorithm for calculating the $HFAuth$ field in hop fields is crucial as it ensures path integrity and block any path manipulation attacks.
+Fortunately, Anapaya employs the same algorithm as the open-source version, facilitating easy verification and reasoning about the security of the system.
+
+However, the absence of DRKey in Anapaya's implementation exposes the system to various attacks, as discussed in \cref{ch:findings}.
+Many of these attacks can be mitigated by implementing a custom source authentication mechanism, though this would require a significant effort and likely would not be as lightweight as SPAO based on DRKey.
+Other attacks, such as injecting unauthenticated SCMP error message, can only be mitigated with solutions that are supported by each border router in the entire SCION network, such as DRKey which is already provided in SCION.
+
+Due to the proprietary nature of Anapaya's SCION implementation, they can modify certain parts of the protocol, without having to document or justify these changes.
+Our analysis revealed a different hop expiry behavior, which leads to the dropping of valid, not-expired SCION packets.
+This behavior arguably does not fully comply with the SCION specification and can cause unintended issues in SCION applications that cache and use path information for the full validity period.
+
+
+Anapaya devices run a recent operating system version with some hardening features enabled.
+Nevertheless, additional hardening options can be configured to further enhance the security of the devices.
+This includes a hardened SSH configuration, option to limit Docker container resources, patched known vulnerabilities, and improved Ubuntu security compliance.
+Many compliance mismatches have already been criticized by Maurer's related work (see \cref{sec:operational-device-security} or his work \cite{Maurer2021}).
+Since Maurer's analysis was based on Ubuntu 18.04, his findings could have been used to improve the security standpoint of the current devices running Ubuntu 22.04.
+In general, most findings have little impact on SCION or require at least some level of access to the device.
+However, Rapid Reset attack on the web server and the lack of authentication on the management system pose significant risks, as they can be exploited without device access.
+Fortunately, many issues have been addressed and fixed by Anapaya's latest software releases.
+Nonetheless, the absence of default authentication on the management system remains a concern, as it can lead to a severe security compromises.
+Specifically, in newer management system versions, it is possible to remove existing SSH keys (thereby locking out legit users) or even to add new SSH keys for the root user.
+This lack of authentication can lead to a full device compromise.
+To recover from such an attack the device has to be reset and reconfigured entirely, which can lead to a significant downtime.
+
+\TODO{ddos interpretation}
+
+\section{Limitations}
+The analysis of the Anapaya devices was limited to those deployed at CYD Campus.
+Other Anapaya customers might have different configurations and security measures in place.
+They may also update their devices more frequently and promptly to the latest software versions.
+Furthermore, our analysis only covered Anapaya EDGE devices and no CORE or GATE devices.
+
+Due to the time limitations of this thesis, we could not fully analyze the proprietary components of the Anapaya SCION implementation.
+Initial reverse engineer efforts did not reveal any critical vulnerabilities.
+However, a more comprehensive analysis is necessary to fully understand the security implications of these proprietary changes.
+
+Nevertheless, since all Anapaya customers run the same software, particularly the same SCION implementation, our SCION protocol analysis remains relevant for all Anapaya customers.
+
+
+\section{Recommendations}
+
+As already emphasized multiple times in the previous chapter and also during discussions with Anapaya, we strongly recommend activating the DRKey feature in their SCION implementation.
+Enabling even an experimental version of DRKey would mitigate many attacks and also pave the way for the development of new SCION application that want to employ DRKey.
+We further recommend implementing regular key updates to ensure good security hygiene.
+Such regular key updates can mitigate the impact of a leaked or compromised key.
+Additionally, SCION implementations (both open-source and Anapaya's) should incorporate some sort of outbound filtering to reduce the risk of successful spoofing attacks.
+
+Regarding Anapaya Edge devices, we recommend adhering to best security practices, such as the CIS benchmarks.
+These benchmarks cover various security aspects, such as hardware security, kernel hardening, privilege settings, firewall rules, and more.
+Regular security assessments and automated vulnerability scans should be conducted to ensure device security.
+It is crucial to address the findings of these assessments by deploying corresponding security updates promptly.
+A timely update process is essential to mitigate the risk of successful attacks.
+
+Finally, for a secure SCION deployment, ensure that the SCION and traditional Internet connection are physically separated.
+This separation helps prevent certain attacks, such as volumetric denial-of-service, from impacting the SCION network and its users.
+\TODO{double check ddos recommendation}
+
+\section{Future Work}
+
+As our analysis focused solely on Anapaya EDGE devices, future research could extend to analyzing Anapaya CORE and GATE devices.
+This would help identify concrete differences among the products and uncover potential security issues within them.
+Given the rapid development of SCION and Anapaya's products, it would also be beneficial to monitor how the security posture of these devices evolves over time.
+
+A more thorough examination of the proprietary components of Anapaya's SCION implementation could reveal additional security vulnerabilities.
+This could be achieved through reverse engineering these proprietary elements or by collaborating with Anapaya to gain deeper insights.
+
+Another interesting area of investigation would be a more in-depth focus on the SCION control plane.
+Control plane issue can significant impact SCION, as it underpins many of its features.
+Our current analysis did not comprehensively cover the control plane in the operational CYD Campus environment due to the associated risks and potential unintended consequences.
+Moreover, the control plane is not directly exposed to end users, making it harder for a single end host attacker to exploit.
+However, key areas for future work include CP-PKI, certificates, or path discovery mechanism.
+
+Future research could also focus on the development of new SCION applications and how they can be secured.
+This includes how these applications should respond to critical scenarios, such as receiving unauthenticated SCMP error messages or handling requests with expired hop fields.
+
+Our work involved a volumetric denial-of-service attack on the traditional Internet and evaluating its impact on SCION.
+It would be interesting to assess the effects of such an attack directly on SCION network.
+
+Additionally, future studies could examine SCION traffic sniffing and traffic analysis.
+This would reveal what information a passive eavesdropper could collect by intercepting SCION traffic.
+Such analysis would be particularly relevant for privacy-sensitive applications that depend on SCION for secure communication.
+
