@@ -17,7 +17,6 @@ In \cref{sec:security_testing}, we will explore different security testing metho
 
 SCION \cite{Perrig2022} is a clean-slate Internet architecture focused on scalability, control and isolation and is designed to provide security, flexibility, and performance improvements over the current Internet.
 This section delves into the fundamental concepts of SCION, offering detailed explanations of its control and data planes and highlighting its key security mechanisms.
-Additionally, we will also briefly introduce Anapaya, the company that provides SCION services.
 
 Unless otherwise stated, the background information presented here is primarily based on  ``The Complete Guide to SCION'' \cite{Perrig2022}.
 
@@ -386,7 +385,12 @@ To achieve this, different algorithms are supported.
 The specific algorithms and further details on SPAO can be found in the SCION book or on the official documentation website \cite{anapayaSCIONPacket}.
 
 
-\subsection{Anapaya}
+\section{Anapaya}
+\label{sec:anapaya}
+In this section, we will introduce Anapaya, a company that provides SCION services.
+We will also explore the different solutions they offer and how these are used by their customers.
+
+\subsection{Overview}
 In 2017, the demand for commercial usage of SCION increased as several Internet Service Providers (ISPs) and entities in the financial sector wanted to adopt it.
 As a result, the company Anapaya Systems was founded by the ETH professors Adrian Perrig, David Basin, and Peter Müller.
 Since then, the demand for SCION in the industry has continued to grow.
@@ -394,10 +398,42 @@ Interest in SCION extends beyond industry to the academic community as well.
 The core SCION components are open source, allowing them to be inspected, tested, and used by anyone.
 Other components, such as a management system, are exclusively distributed to Anapaya customers \cite{ethzSecureInternet}.
 
-The Cyber-Defense Campus is also a customer of Anapaya and uses SCION for their research.
+
+\subsection{Solutions}
+In the following, a brief overview of the different Anapaya solutions is provided.
+The information is based on the official Anapaya website \cite{anapayaHomepage} and their documentation \cite{anapayaDocs}.
+Each of these solutions contain two software packages:
+One packages defines the SCION software, its components, and configuration.
+The other package includes system configuration, such as installed software and its  specific settings.
+
+\subsubsection{Anapaya CORE}
+The Anapaya CORE product is deployed by ISPs that operate a SCION core AS.
+Typically, at least two Anapaya CORE devices are deployed to connect to other core ASes and its customers.
+Two devices are used to ensure redundancy and high availability and allow performing maintenance on one device without affecting the network.
+Anapaya CORE includes the necessary software components to run a SCION core router.
+The software is compatible with common x86 of-the-shelf server hardware, but Anapaya also sells pre-configured hardware.
+
+
+\subsubsection{Anapaya EDGE}
+Anapaya EDGE is typically deployed by end customers, such as enterprises or data centers.
+It provides an entry point to the SCION network and are primarily used to connect to the SCION core routers.
+The Anapaya EDGE product implements the SCION border router functionality together with the SCION-IP gateway.
+This allows both SCION-enabled and legacy end hosts to use the SCION network and benefit from its benefits.
+The solution also includes a management system that enables customers to define their communication partners.
+It allows prioritizing certain paths through configured traffic policies.
+
+\subsubsection{Anapaya GATE}
+The Anapaya GATE solution is operated by ISPs and incorporates the SCION-IP gateway module.
+It allows companies to announce certain services exclusively on the SCION network, thereby preventing DDoS, intrusion, and other attacks from the traditional Internet.
+Typical users of the Anapaya GATE product include employees working from remote or trusted parties who otherwise do not have SCION access.
+These trusted users are directed to the Anapaya GATE of the ISP, which then forwards the traffic to the Anapaya Edge of the end customer.
+Communication from remote users to the Anapaya GATE use standard IP traffic, whereas communication between the Anapaya GATE and the Anapaya Edge is done over SCION.
+
+\subsection{Cyber-Defense Campus}
+The Cyber-Defense (CYD) Campus is also a customer of Anapaya and uses SCION for their research.
+At their locations in Lausanne, Thun, and Zurich Anapaya Edge devices are deployed.
 Further details on their SCION network setup can be found in \cref{sec:setup}
 
-\TODO{Add information about different Anapaya routers (edge, core, gate)}
 
 
 \section{Security Testing}

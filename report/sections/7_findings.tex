@@ -21,7 +21,7 @@ The second section focuses on the Anapaya router itself.
 
 
 
-\subsection{MAC}
+\subsection{MAC Algorithm}
 We compared the MAC algorithm used in the Anapaya version of SCION with the one available in the open source version.
 Initially, we extracted the master secret from the file system and derived a MAC key in accordance with the definitions provided in the open source code.
 Using this derived MAC key, we calculated the MAC value for a given hop field.
@@ -137,18 +137,13 @@ Therefore, clients must implement their own solutions to ensure the integrity of
 For instance, this can be achieved by adding a MAC to the entire packet or by comparing the path information of the received packet with the expected path information.
 
 
-\subsection{Volumetric Denial of Service}
-TODO
-\TODO{move to single section}
-
-
 
 
 
 
 \section{Anapaya Router}
 This section deals with the security related findings of the three operational Anapaya routers at the CYD Campus.
-\TODO{General info about routers? OS version}
+The devices run Ubuntu 22.04 as the operating system with Linux Kernel 5.15.0
 
 
 \subsection{Secure Shell (SSH)}
@@ -359,8 +354,8 @@ Setting such limits would prevent a single container from consuming all the rout
 
 
 
-\subsection{Appliance}
-Currently, no authentication is required for the CYD SCION users to access the appliance.
+\subsection{Management System}
+Currently, no authentication is required for the CYD SCION users to access the Anapaya router's management web interface or management API.
 Access is granted solely based on knowledge of the IP address of the border router.
 This configuration allows users to make significant changes to the border router's configuration, including the following:
 
@@ -370,17 +365,17 @@ This configuration allows users to make significant changes to the border router
     \item Changing DNS and NTP server settings
     \item Adding new TRCs
     \item Completely disabling the router
-    \item Adding custom authentication options and potentially lock out other users from accessing the appliance
+    \item Adding custom authentication options and potentially lock out other users from accessing the management system
 \end{itemize}
 
 This lack of authentication was also present on the test device, which shows that no default authentication is set up.
 This observation is consistent with the official Anapaya documentation, which states that basic authentication is disabled by default \cite{anapayaManagemenDoc}.
-To improve the security of the appliance, it is recommended to enable authentication for the appliance.
+To improve the security of the device and especially the SCION configuration, it is recommended to enable authentication for the management system.
 We also encourage Anapaya to enable basic password authentication by default for newly deployed devices.
 
 
 \subsection{Web Server}
-The appliance is also being served by a web server running on the router, accessible to any AS-local SCION user or any remote user in an AS with a configured SIG connection.
+The management system is also being served by a web server running on the router, accessible to any AS-local SCION user or any remote user in an AS with a configured SIG connection.
 The web server in use is Caddy, version 2.6.4, released in February 2023.
 This version is vulnerable to a denial of service attack known as Rapid Reset, which consumes the routers resources and eventually crashes it, thereby taking down all its services, including SCION.
 The Rapid Reset attack exploits the HTTP/2 protocol's capability to open multiple streams within a single TCP connection.
@@ -389,7 +384,7 @@ By closing the streams right after opening, the attacker ensures that the number
 Nonetheless, the server still has to perform substantial work for these canceled requests, including allocating memory for a new stream, parsing the query, performing header decompression, and other tasks \cite{googleWorksNovel}.
 
 By modifying the code in an existing proof-of-concept attack \cite{githubGitHubMicrictorhttp2rststream}, we were able to attack our Anapaya router and finally taking it down withing a few seconds.
-Notably, this attack is effective even when the appliance is configured with authentication, as the web server itself is not protected by it.
+Notably, this attack is effective even when the management system is configured with authentication, as the web server itself is not protected by it.
 
 The recommended solution to mitigate this vulnerability is to update the Caddy web server to version 2.7.5 or later, which addresses the Rapid Reset attack \cite{githubReleasesCaddyservercaddy}.
 
@@ -405,3 +400,12 @@ The Anapaya routers should be updated regularly to ensure that the latest securi
 In May 2024, CYD bought and received a new Anapaya Router.
 The system and SCION software versions on this new device were outdated and contained the software releases of autumn 2023 (end of September and mid of October).
 An improvement on Anapaya's side would be to ship the routers with a more recent software version, ideally the latest release.
+
+
+
+
+\section{Impact Traditional Internet on SCION}
+We analyzed the impact of the traditional Internet on CYD's SCION connection by running a volumetric denial-of-service attack.
+
+\TODO{Plots, text, etc.}
+
