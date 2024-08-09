@@ -7,7 +7,78 @@
 % * Explain KEY CONCEPTS / INSIGHTS that the thesis introduces
 % * Pose a list of QUESTIONS! Readers love puzzles, and ideally, the thesis contains several questions that the reader will try to answer but can't, then once the answer is in the thesis the reader says: great!
 
+% 34789 total cyber incidents in first half of 2024
+
+
+% - Importance network security (minimize risk of cyber attacks and data breaches)
+% - possible solution SCION commercialized by Anapaya
+% - emerging technology, better internet architecture with security in mind (+ separated from traditional internet = what not can be seen can not be attacked)
+% - At cyber defense campus Motivation = check what Swiss Confederation/Government is interested in (and it is also interested in promising looking SCION)
+% - SCION was designed with security in mind, but is it really secure?
+% - what with the actually deployed and operation SCION version?
+% - Trust is good, control is better (check if Anapaya SCION is secure and if it ready to be used to protect Swiss critical infrastructure)
+
+In today's interconnected world, the frequency and sophistication of cyber incidents have reached unprecedented levels, posing significant threats to national security, economic stability, and personal privacy.
+Switzerland has not been immune to these challenges.
+In recent years, the country has witnessed a dramatic rise in cyber incidents.
+According to the National Cyber Security Centre (NCSC), over 30,000 cases were reported in the second half of 2023 alone, nearly doubling the number from the same period in the previous year.
+This upward trend continued into the first half of 2024, with the NCSC documenting almost 35,000 incidents \cite{HomepageNCSC}.
+These figures likely represent just a fraction of the actual number of cyber incidents, underscoring the urgent need for enhanced network security.
+
+Network security is crucial for minimizing the risk of cyberattacks and data breaches, which can have severe consequences for individuals, businesses, and governments.
+Traditional internet architecture, while foundational, often lacks the necessary security features to combat modern cyber threats effectively.
+This shortcoming highlights the need for innovative solutions that prioritize security from the very beginning.
+One such emerging technology is SCION (Scalability, Control, and Isolation On Next-Generation Networks).
+
+SCION, commercialized by Anapaya Systems, offers a promising solution.
+Unlike the conventional Internet architecture, SCION is designed with security as a core component.
+By providing a new Internet architecture that inherently includes robust security features, SCION aims to offer a more secure and resilient network environment.
+One of the key advantages of SCION is its separation from the traditional Internet, adhering to the principle that "what can not be seen, can not be attacked".
+This makes SCION a compelling candidate for securing critical infrastructure and sensitive communications.
+
+Recognizing the potential of SCION, the Swiss Confederation and Government, through the Cyber Defense (CYD) Campus, are particularly interested in exploring its capabilities.
+The CYD Campus is dedicated to advancing cybersecurity capabilities and is eager to evaluate the security effectiveness of promising technologies like SCION.
+Although SCION was designed with security in mind, it is crucial to verify whether it delivers on this promise in actual deployment and operational environments.
+
+Therefore, this thesis aims to address the crucial question:
+\begin{center}
+    \textit{Is the operational version of SCION, as deployed by Anapaya, truly secure?}
+\end{center}
+
+To tackle this question, this research will conduct a comprehensive security analysis of the operational SCION network.
+The analysis will focus on identifying potential vulnerabilities, assessing the effectiveness of SCION's security mechanisms in practice, and evaluating its overall readiness for deployment in critical infrastructure settings.
+
+By addressing these aspects, this thesis aims to provide valuable insights into the practical security performance of SCION.
+The findings will contribute to the academic understanding of secure network design and inform decision-making in public and private sectors.
+Through this analysis, the thesis will help determine whether Anapaya's SCION is a viable and trustworthy solution in an increasingly dangerous cyber threat landscape.
+
+
+% \\ OR \\
+% The analysis tries to answer key questions such as:
+% \begin{itemize}
+%     \item How effective are SCION's security mechanisms in real-world deployments?
+%     \item What potential vulnerabilities exist within the operational SCION network, and how can they be mitigated?
+%     \item Is SCION ready to be used for protecting Switzerland's critical infrastructure?
+% \end{enumerate}
+% for securing critical infrastructure
+% By rigorously examining these aspects, the thesis seeks to determine if SCION can be trusted to fulfill its promise of enhanced security.
 
 
 \section{Organization}
 \label{sec:intro:organization}
+
+The organization of this thesis is as follows:
+First, this thesis is put in context to the current state of research by presenting related work.
+This also underscores the relevance of our investigation.
+Following that, \cref{ch:background} introduces background information to better understand the concepts of the thesis.
+The chapter includes core concepts and features of the SCION architecture, presents Anapaya and their products in more details, and provides a brief introduction to security testing methods.
+The problem statement is presented in \cref{ch:problem}, which includes various attacker models and describes their capabilities and potential impact on SCION.
+The objectives of this thesis are also laid out in that chapter.
+\cref{ch:methodology} describes the general approach taken to achieve the goals of this thesis.
+It gives an overview of the specific SCION network setup used during our analysis and presents the applied tools and techniques in more detail.
+The actual implementation of our approach is described in \cref{ch:implementation}, including for example the implementation of the different attack models.
+The results of the security analysis of the SCION Internet architecture can be found in \cref{ch:findings}.
+Subsequently, in \cref{ch:discussion}, the results are discussed on a higher level, examining their implications and limitations.
+Finally, \cref{ch:conclusion} summarizes the key contributions and their implications.
+The thesis ends with an outline of possible future work.
+

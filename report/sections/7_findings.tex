@@ -17,6 +17,8 @@ It is structured into two main sections:
 The first section covers findings related to the SCION protocol in use.
 The second section focuses on the Anapaya router itself.
 
+\TODO{Update chapter with comments of Anapaya and updated findings}
+
 \section{SCION Protocol}
 
 
@@ -58,7 +60,7 @@ Moreover, this can lead to reflection amplification attacks, particularly when t
 This can be exploited to launch denial-of-service attacks against the spoofed location.
 
 We also attempted to force a path lookup at the recipient, assuming it would reverse the path information to reply.
-The strategy involved using path segments that were about to expire.
+The strategy involves using path segments that are about to expire.
 The initial packet would use valid path segments, but when the destination reverses the path during the reply, the path segments would have already expired.
 Depending on the application this could lead to a forced path lookup based on the spoofed source information, resulting in successful spoofing.
 However, during our analysis, we observed that the Anapaya border router implementation drops network packets that have a path information that is going to expire in the next 30 seconds or less.
@@ -216,7 +218,7 @@ Numbers in parentheses in this section refer to the corresponding section in the
 
 There are more compliance mismatches found during the audit.
 Mostly related to ensure clear audit trails, including monitoring and logging of security-relevant events, or to disable unnecessary kernel modules
-The full list of findings can be found \TODO{reference appendix}.
+The full list of findings can be found \cref{app:automated-scan-result}.
 
 \subsection{Security of systemd Services}
 As seen in the previous section, the routers operating system can be optimized to ensure a higher level of security.
@@ -324,7 +326,7 @@ There are critical vulnerabilities associated with the drivers of the Intel Ethe
 Although some packages installed on the routers are vulnerable and could be exploited remotely, these packages are not actively used or running on the routers.
 It is recommended to either update the affected packages or, preferably, remove unused software entirely to further reduce the attack surface.
 
-A detailed report on all identified vulnerabilities can be found \TODO{reference scan results appropriately}.
+A detailed report on all identified vulnerabilities can be found in \cref{app:automated-scan-result}.
 
 
 

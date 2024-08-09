@@ -25,6 +25,7 @@ For temporal lensing, he showed how an attacker could misuse the multi-path feat
 During the AS spoofing attack, many QUIC connections with different spoofed source AS information were successfully opened in parallel.
 Unfortunately, the concrete implications on the victim were not further investigated.
 Nevertheless, he also proposed countermeasures, such as source authentication to mitigate these attacks.
+Our analysis focuses on the SCION data plane as well, but extends beyond these two specific attacks.
 
 
 Thus far, security analyzes of SCION have predominantly concentrated on the data plane or the protocol itself.
@@ -36,6 +37,8 @@ Hager identified various attack vectors, including hardware, operating system, S
 For the latter, the study evaluated the likelihood of various network attacks --- such as packet sniffing, DDoS, Man-in-the-Middle, route hijacking, and AS spoofing --- and their extent of damage in the different scenarios.
 Additionally, it assessed the information security of the different deployments, focusing on the confidentiality, integrity, availability, and anonymity of the SCION network traffic.
 As this work was in collaboration with the federal department of defense, the work also provided recommendations for secure SCION deployment for governmental use.
+Our research deals with the secure deployment of SCION specifically at the CYD Campus and evaluates its robustness against various network attacks.
+
 
 \section{Operational Device Security}
 \label{sec:operational-device-security}
@@ -49,7 +52,7 @@ However, given the changes in the SCION ecosystem over recent years, a new secur
 
 \section{Practical Application}
 Lastly, we want to mention the practical work of Niederer \cite{Niederer2022}, which among other things analyzed and accompanied the setup of the operational SCION devices at the CYD Campus.
-Thanks to his work and efforts, we were now able to concentrate on the security of SCION within the CYD Campus setting.
+Thanks to his work and efforts, we are now able to concentrate on the security of SCION within the CYD Campus setting.
 
 \section{Conclusion}
 This chapter reviewed significant contributions to the security analysis of SCION, highlighting the evolution of research from early evaluations to recent studies on deployment and operational device security.

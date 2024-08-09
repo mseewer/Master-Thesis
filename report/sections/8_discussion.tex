@@ -14,7 +14,7 @@
 
 In this chapter, we describe the wider meaning and implications of our findings.
 It also discusses the limitations of our work and provides recommendations for Anapaya and SCION deployments in general.
-Finally, we outline potential future work that can build on our analysis.
+% Finally, we outline potential future work that can build on our analysis.
 
 
 \section{Interpretations and Implications}
@@ -75,29 +75,4 @@ A timely update process is essential to mitigate the risk of successful attacks.
 Finally, for a secure SCION deployment, ensure that the SCION and traditional Internet connection are physically separated.
 This separation helps prevent certain attacks, such as volumetric denial-of-service, from impacting the SCION network and its users.
 \TODO{double check ddos recommendation}
-
-\section{Future Work}
-
-As our analysis focused solely on Anapaya EDGE devices, future research could extend to analyzing Anapaya CORE and GATE devices.
-This would help identify concrete differences among the products and uncover potential security issues within them.
-Given the rapid development of SCION and Anapaya's products, it would also be beneficial to monitor how the security posture of these devices evolves over time.
-
-A more thorough examination of the proprietary components of Anapaya's SCION implementation could reveal additional security vulnerabilities.
-This could be achieved through reverse engineering these proprietary elements or by collaborating with Anapaya to gain deeper insights.
-
-Another interesting area of investigation would be a more in-depth focus on the SCION control plane.
-Control plane issue can significant impact SCION, as it underpins many of its features.
-Our current analysis did not comprehensively cover the control plane in the operational CYD Campus environment due to the associated risks and potential unintended consequences.
-Moreover, the control plane is not directly exposed to end users, making it harder for a single end host attacker to exploit.
-However, key areas for future work include CP-PKI, certificates, or path discovery mechanism.
-
-Future research could also focus on the development of new SCION applications and how they can be secured.
-This includes how these applications should respond to critical scenarios, such as receiving unauthenticated SCMP error messages or handling requests with expired hop fields.
-
-Our work involved a volumetric denial-of-service attack on the traditional Internet and evaluating its impact on SCION.
-It would be interesting to assess the effects of such an attack directly on SCION network.
-
-Additionally, future studies could examine SCION traffic sniffing and traffic analysis.
-This would reveal what information a passive eavesdropper could collect by intercepting SCION traffic.
-Such analysis would be particularly relevant for privacy-sensitive applications that depend on SCION for secure communication.
 

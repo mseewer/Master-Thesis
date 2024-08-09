@@ -7,3 +7,62 @@
 % * Some additional insights.
 % * *The conclusion should be very different from the abstract!*
 
+This thesis set out to critically assess the security of the SCION Internet architecture, with a particular focus on Anapaya's proprietary implementation.
+The investigation was driven by the central question:
+Can SCION, in its current form as deployed by Anapaya, truly fulfill its promise of a more secure, resilient, and reliable Internet architecture?
+
+To address this question, the thesis conducted a comprehensive analysis across three key areas:
+
+First, an in-depth examination of the deployed Anapaya EDGE devices was performed, revealing several weaknesses.
+The study uncovered insecure default configurations, such as inadequate SSH settings and the presence of unused and vulnerable software packages.
+More alarmingly, the SCION management system lacked authentication, posing a significant risk of unauthorized access and control over the network infrastructure.
+Even when authentication was enabled, the management system remained susceptible to attacks capable of crashing the device within seconds and thereby also taking down all SCION services.
+
+
+The second key area focused on examining the SCION protocol implementation to assess the security of the deployed version and also to identify potential derivations from the open-source version.
+The analysis revealed significant flaws, with Anapaya's implementation, including the absence of source authentication within the SCION protocol and the use of persistent master secrets.
+These vulnerabilities enable attackers to forge packets, leading to various attack vectors that undermine the integrity and trustworthiness of the network.
+
+
+The third and final area of investigation evaluated the impact of the traditional Internet on SCION by conducing a real-world volumetric denial-of-service attack.
+\TODO{Mention vol dos test}
+
+\\
+It became evident that while SCION provides a robust framework, the security of its implementation heavily depends on the rigor of operational practices and the constant evolution of security measures.
+The vulnerabilities identified in this thesis highlight the need for continuous security audits, particularly as SCION and its implementations are increasingly deployed in critical infrastructure.
+
+In answering the thesis's key question, this research concludes that while SCION has the potential to fulfill its promise as a next-generation Internet architecture, the current implementation by Anapaya falls short in several critical areas.
+The identified weaknesses, if left unaddressed, could undermine the security and reliability that SCION aims to provide.
+However, these challenges are not insurmountable.
+The findings offer a clear roadmap for improving the security of SCION deployments, emphasizing the need for stronger source authentication mechanisms, more secure device configurations, and \TODO{vol dos}.
+
+Ultimately, this research contributes to the ongoing development and maturation of SCION, providing valuable insights that can help shape its future evolution.
+By addressing the vulnerabilities identified in this thesis, SCION can move closer to realizing its full potential as a secure and resilient Internet architecture for the modern digital world.
+
+
+\section{Future Work}
+
+While our analysis focused on Anapaya EDGE devices, future research could extend to analyzing Anapaya CORE and GATE devices.
+This expansion would help identify differences among the products and uncover potential security issues within them.
+Given the rapid development of SCION and Anapaya's products, it would also be beneficial to monitor how the security posture of these devices evolves over time.
+
+Further examination of Anapaya's proprietary SCION components could reveal additional security vulnerabilities.
+This could be achieved through reverse engineering of these proprietary elements or by collaborating with Anapaya to gain deeper insights into their implementation.
+
+An in-depth investigation of the SCION control plane presents another promising area for future research.
+Control plane issues can significant impact SCION, as it underpins many of its features.
+This thesis did not fully cover the control plane in the operational CYD Campus environment due to the associated risks and potential unintended consequences.
+Moreover, the control plane is not directly exposed to end users, making it harder for a single end host attacker to exploit.
+However, key areas for future work include CP-PKI, certificate management, or path discovery mechanism.
+
+Future research could also explore the development and security of new SCION applications.
+This includes how these applications should handle critical scenarios, such as receiving unauthenticated SCMP error messages or managing requests with expired hop fields.
+
+Our work involved a volumetric denial-of-service attack from the traditional Internet and evaluating its impact on SCION.
+It would be interesting to assess the impact of other attacks originating from the traditional Internet.
+Additionally, future studies could evaluate the feasibility and the potential effects of these attack when happening directly within the SCION network.
+
+Finally, future studies could investigate SCION traffic sniffing and traffic analysis.
+This would help determine what information a passive eavesdropper could collect by intercepting SCION traffic.
+Such analysis would be particularly relevant for privacy-sensitive applications that depend on SCION for secure communication.
+
