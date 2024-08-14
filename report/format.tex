@@ -2,6 +2,8 @@
 % Mathematics
 \usepackage{amsmath,amsthm,amssymb,amsfonts}
 \usepackage{mathtools}
+\usepackage{pifont} % For checkmark and cross symbols
+\usepackage{makecell} % For better vertical and horizontal centering
 %
 % Fonts
 \usepackage{newpxtext,newpxmath} % Palatino font, remove or change according to your taste
@@ -14,6 +16,7 @@
 %
 % Nicer-looking tables
 \usepackage{booktabs,tabularx}
+\usepackage{ltablex}
 %
 % Correct and consistent units and numbers
 \usepackage[mode=text, math-rm=\text, detect-all, binary-units=true, per-mode=symbol, range-phrase=\,--\,, range-units=single, detect-weight=true, detect-family=true]{siunitx}
@@ -105,4 +108,9 @@
 \newcommand{\gennote}[3][blue]{\textcolor{#1}{\ $\rule{8pt}{8pt}_{\textsf{\scshape\bfseries #2}}$ #3}}
 \newcommand{\TODO}[1]{\gennote[red]{TODO}{#1}}
 
-\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+% \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+\newcommand{\mitigatedyes}{\ding{51}}
+\newcommand{\mitigatedno}{\ding{55}}
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{Y}[1]{>{\centering\arraybackslash}m{#1}}

@@ -20,21 +20,39 @@ This section delves into the fundamental concepts of SCION, offering detailed ex
 
 Unless otherwise stated, the background information presented here is primarily based on  ``The Complete Guide to SCION'' \cite{Perrig2022}.
 
-\subsection{Core Concepts}
-In the following we explain SCION's core features and how it achieves them.
-\subsubsection{Isolation}
+\subsection{Architecture}
 
-By grouping different autonomous systems (ASes) into isolation domains (ISDs), as shown in \cref{fig:scion_isd_architecture}, SCION provides both fault and trust isolation.
-Each ISD contains core ASes that administer the ISD, form the root of trust of the ISD, and provide connectivity to other ISDs.
-The configuration of an ISD is stored in a signed file called trust root configuration (TRC), which includes for example root certificates or policies.
-If a misconfiguration occurs in an ISD, only that ISD is affected and the rest of the Internet can continue to operate.
+The SCION architecture is designed around a global network of independently operated entities known as Autonomous Systems (ASes).
+An AS typically represents a network managed by a single organization, such as an Internet Service Provider (ISP).
+SCION organizes these ASes into groups called Isolation Domains (ISDs), which are illustrated in \cref{fig:scion_isd_architecture}.
+Within the SCION Internet architecture, every AS is uniquely identifiable by a ISD-AS number.
+
+ISDs funciton as both administrative boundaries and security domains.
+Within each ISD, a set of ASes is responsible for managing the ISD.
+These so-called core ASes establish the root of trust within the ISD and are responsible for managing connectivity between ISDs.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\textwidth]{figures/scion_isd_architecture.png}
-    \caption{SCION Architecture with ISD and ASes. ASes are represented by circles. Figure taken from Chapter 2 of the SCION book \cite{Perrig2022}.}
+    \caption{SCION Architecture with ISD and ASes, where ASes are represented by circles \cite[Chapter 2]{Perrig2022}.}
     \label{fig:scion_isd_architecture}
 \end{figure}
+
+
+\subsection{Core Concepts}
+In the following we explain SCION's core features and how it achieves them.
+\subsubsection{Isolation}
+
+SCION implements robust isolation through the concept of isolation domains, which are designed to provide both fault and trust isolation.
+
+The configuration of an ISD is stored in a signed file called trust root configuration (TRC).
+The TRC includes essential components such as root certificates and policies, which define the trust relationships and operational parameters within the ISD.
+In the event of a misconfiguration or failure within an ISD, the impact is contained within that specific domain.
+This containment ensures that the rest of the Internet continues to operate unaffected.
+
+In terms of trust isolation, SCION ensures that only the core ASes within an ISD are trusted.
+This approach eliminates the potential risks associated with external trust dependencies.
+This strategic segregation of trust domains guarantees that issues or breaches occurring within one ISD do not compromise the integrity, or trustworthiness of the whole Internet.
 
 
 \subsubsection{Control}
@@ -94,7 +112,7 @@ This process, known as beaconing, is depicted in \cref{fig:scion_path_exploratio
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\textwidth]{figures/scion_beacon.png}
-    \caption{Propagation of PCBs within an AS. Figure taken from Section 2.3.1 of the SCION book \cite{Perrig2022}.}
+    \caption{Propagation of PCBs within an AS \cite[Section 2.3.1]{Perrig2022}.}
     \label{fig:scion_path_exploration}
 \end{figure}
 
@@ -112,7 +130,10 @@ For the AS entry, we use a simplified format to highlight the key fields.
 A detailed description of the full format can be found in Section 4.1.1.2 of the SCION book \cite{Perrig2022}.
 The simplified AS entry format includes of a hop field $HF$ and a signature $\Sigma$.
 The format of the hop field is as follows:
-$$ HF = \langle Local \parallel Next \parallel Flags_{HF} \parallel ExpTime \parallel ConsIngress \parallel ConsEgress \parallel HFAuth\rangle $$
+\begin{align*}
+    HF = \langle &Local \parallel Next \parallel Flags_{HF} \parallel ExpTime \parallel \\  
+    &ConsIngress \parallel ConsEgress \parallel HFAuth\rangle 
+\end{align*}
 
 $Local$ is the ISD-AS identifier of the AS, $Next$ is the ISD-AS identifier of the next AS in the path (i.e., where the PCB is forwarded next).
 $Flags_{HF}$ indicates different processing options for the AS.
@@ -125,7 +146,7 @@ The signature field $\Sigma$ is used to authenticate the AS entry and is calcula
 The signature is computed over the info field, all previously traversed AS entries, and the current hop field, or formally expressed as:
 $$\Sigma_i = \text{Sign}_{K_i} \bigl( INF \parallel ASE_0 \parallel \dots \parallel ASE_{i-1} \parallel HF_i \bigr)$$
 
-\subsubsection{MAC calculation}
+\subsubsection{MAC Calculation}
 \label{sec:mac_calc}
 As previously mentioned, the $HFAuth$ value authenticates the hop field.
 This section illustrated how the MAC value also authenticates all previously traversed hops.
@@ -149,7 +170,7 @@ Additionally, only $\beta_0$ is stored in the $SegID$ field of the PCB, as the o
 Recalculation of these values during packet forwarding in the data plane would be too expensive.
 Therefore, each router continuously updates the $SegID$ to reflect the value of $\beta_{i+1}$, which the next router uses to calculate its MAC value.
 
-\subsubsection{Path-segment registration}
+\subsubsection{Path-segment Registration}
 Path segments are derived from PCBs and must be registered first before they can be utilized by the end hosts.
 From the stored PCBs, the up- and down segments get created:
 Since these path segments start or end at the local AS, the selected PCB has to be modified accordingly:
@@ -165,7 +186,7 @@ The different types of SCMP messages are shown in \cref{fig:scmp_message_types}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\textwidth]{figures/scmp_message_types.png}
-\caption{Different types of SCMP messages. Original figure from the SCION book \cite[4.7.2]{Perrig2022}.}
+\caption{Different types of SCMP messages \cite[Section 4.7.2]{Perrig2022}.}
     \label{fig:scmp_message_types}
 \end{figure}
 
@@ -195,7 +216,7 @@ SCION packets contain a network-layer (layer 3) SCION header, which is structure
         Path header \\
         \hline
     \end{tabularx}
-    \caption{SCION header format, based on Figure 5.2 of the SCION book \cite{Perrig2022}.}
+    \caption{SCION header format \cite[Section 5.2]{Perrig2022}.}
     \label{fig:scion_header_format}
 \end{figure}
 
@@ -233,8 +254,7 @@ The path meta header consists of the indices of the current info field $CurrINF$
         \hline
     \end{tabularx}
     \caption{Structure of the SCION path header.
-    Not all info fields must be present (at least one and at most all three), and their order is fixed.
-    Based on Figure 5.5 of the SCION book \cite{Perrig2022}.}
+    Not all info fields must be present (at least one and at most all three), and their order is fixed \cite[Section 5.4]{Perrig2022}.}
     \label{fig:scion_path_header}
 \end{figure}
 
@@ -250,7 +270,7 @@ Subsequently, the hop fields are added in the order of the path segments.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\textwidth]{figures/scion_path_header_construction.png}
-    \caption{Construction of the path header out of the path segments. Figure taken from Section 5.4 of the SCION book \cite{Perrig2022}.}
+    \caption{Construction of the path header out of the path segments \cite[Section 5.4]{Perrig2022}.}
     \label{fig:scion_path_header_contruction}
 \end{figure}
 
@@ -266,10 +286,10 @@ The SCION border routers executes various tasks when processing SCION packets an
 The following four router positions are distinguished:
 
 \begin{enumerate}[label=P\arabic*]
-    \item In the middle of a path segment and packet transits the AS, i.e., this only needs one hop field.
-    \item At the joint of two path segments and packet transfers AS, i.e., this needs two hop fields.
-    \item In the source AS.
-    \item In the destination AS.
+    \item In the middle of a path segment
+    \item At the joint of two path segments
+    \item In the source AS
+    \item In the destination AS
 \end{enumerate}
 
 Additionally, the specific tasks performed by the router also depend on whether it is an ingress or egress router of the AS.
@@ -326,12 +346,12 @@ This certificate chain is being used to verify the authenticity of an AS.
 Each AS (including its border routers, SCION end hosts etc.) knows the TRC of its ISD and can thus verify the certificates of other ASes within the ISD.
 This ensures that only valid and authorized ASes can participate in the SCION network, as PCBs are only accepted if they are signed by a valid AS certificate.
 
-While authentication based on signature and certificates may work well for the control plane with low packet rates, the data plane with high packet rates requires a more efficient authentication mechanism.
+While authentication based on signatures and certificates may work well for the control plane with low packet rates, the data plane with high packet rates requires a more efficient authentication mechanism.
 This is where the DRKey comes into play, which is explained in the next section.
 
 \subsubsection{Dynamically Recreatable Keys (DRKey)}
 \label{sec:drkey}
-This section explains the dynamically recreatable key (DRKey) system and its application within SCION.
+This section explains the dynamically recreatable key (DRKey) system \cite{TODO} and its application within SCION.
 Since it relies on symmetric cryptographic keys, it is much faster than the CP-PKI.
 This allows for efficient packet authentication in the data plane at high bandwidths and mitigates the risk of Denial-of-Service (DoS) attacks that could occur with slower asymmetric cryptography.
 Nevertheless, the DRKey system uses CP-PKI to establish the initial keys.
@@ -346,7 +366,7 @@ Consider the setup depicted in \cref{fig:drkey_setup} where the server $S_B$ is 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\textwidth]{figures/drkey_topo.png}
-    \caption{DRKey communications between an end host and server in different ASes. Based on Figure 3.2 from the SCION book \cite{Perrig2022}.}
+    \caption{DRKey communications between an end host and server in different ASes \cite[Section 3.2.2]{Perrig2022}.}
     \label{fig:drkey_setup}
 \end{figure}
 
@@ -358,10 +378,9 @@ Arrows 2a and 2b show that server $S_B$ is trusted and can therefore obtain the 
 When host $H_A$ wants to authenticate itself to server $S_B$ (arrow 4), it contacts the certificate service $CS_A$ and requests a host-to-host key $K_{B:S_B \rightarrow A:H_A}$, which $CS_A$ can locally derive using $K_{B \rightarrow A}$ (arrows 3a and 3b).
 Because $S_B$ is on the fast side, it can derive the key $K_{B:S_B \rightarrow A:H_A}$ using $SV_B$.
 
-\subsubsubsection{Key Derivation}
+\paragraph{Key Derivation}
 In the following, we will explain the key derivation process in more detail.
-
-Based on the AS-to-AS key $K_{B \rightarrow A}$, second level keys (host-to-AS or AS-to-host) will be derived like this:
+Based on the AS-to-AS key $K_{B \rightarrow A}$, second level keys (host-to-AS or AS-to-host) are derived like this:
 \begin{align*}
 K_{B \rightarrow A:H_A} &= \text{PRF}_{K_{B \rightarrow A}}(0 \parallel H_A) \\
 K_{B:S_B \rightarrow A} &= \text{PRF}_{K_{B \rightarrow A}}(1 \parallel S_B)
@@ -375,9 +394,9 @@ Finally, the third level (host-to-host) key can be derived using the host-to-AS 
 
 The secrete value $SV$ can be different for different protocols and applications.
 
-\subsubsubsection{SCION Packet Authentication Option}
+\paragraph{SCION Packet Authentication Option}
 \label{sec:spao}
-One prominent application that uses DRKey is the SCION packet authentication option (SPAO).
+One prominent application that uses DRKey is the SCION packet authentication option (SPAO) \cite{TODO}.
 SPAO is added to the SCION header of a data plane packet and provides source authentication between end hosts.
 Since even the first packet sent is authenticated, there is no need for explicit key exchange between end hosts.
 Additionally, SPAO also provides integrity protection of the packet.
@@ -429,8 +448,8 @@ Typical users of the Anapaya GATE product include employees working from remote 
 These trusted users are directed to the Anapaya GATE of the ISP, which then forwards the traffic to the Anapaya Edge of the end customer.
 Communication from remote users to the Anapaya GATE use standard IP traffic, whereas communication between the Anapaya GATE and the Anapaya Edge is done over SCION.
 
-\subsection{Cyber-Defense Campus}
-The Cyber-Defense (CYD) Campus is also a customer of Anapaya and uses SCION for their research.
+\subsection{Cyber-Defence Campus}
+The Cyber-Defence (CYD) Campus is also a customer of Anapaya and uses SCION for their research.
 At their locations in Lausanne, Thun, and Zurich Anapaya Edge devices are deployed.
 Further details on their SCION network setup can be found in \cref{sec:setup}
 

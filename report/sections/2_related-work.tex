@@ -9,15 +9,15 @@
 In this chapter, we review literature and previous work related to our security analysis.
 We will also justify the need for our work by showing how it fits into the research landscape and how it differs from existing work.
 
-\section{Early Security Analysis}
+\paragraph{Early Security Analysis}
 In 2016, Rothenberger \cite{Rothenberger2016} conducted one of the first security analyzes of SCION.
 At that time, SCION was still in its early stages of development and had not yet reached its current level of maturity.
-Rothenberger's analysis compared SCION to other competing protocol that offer various security improvements over the traditional Internet, such as BGPsec or DNSSEC
+Rothenberger's analysis compared SCION to other competing protocols that offer various security improvements over the traditional Internet, such as BGPsec or DNSSEC.
 His thesis identified various vulnerabilities, including memory leaks, resource exhaustion, misconfigurations, and cryptographic weaknesses.
 These issues were subsequently addressed, and also his cryptographic recommendations were incorporated into the protocol, enhancing SCION's security and robustness.
 Given SCION's significant evolution since then, a new security analysis is now essential to evaluate its current resilience.
 
-\section{Data Plan Security}
+\paragraph{Data Plan Security}
 In 2021, Lehmann \cite{Lehmann2021} focused on the data plane security aspects of SCION.
 His research specifically examined temporal lensing and AS spoofing attacks within SCION.
 Lehmann implemented these attacks in SCIONLab, a testbed for SCION, to demonstrate their feasibility.
@@ -31,7 +31,7 @@ Our analysis focuses on the SCION data plane as well, but extends beyond these t
 Thus far, security analyzes of SCION have predominantly concentrated on the data plane or the protocol itself.
 Recent works have shifted focus to the secure deployment of SCION.
 
-\section{Secure Deployment}
+\paragraph{Secure Deployment}
 Hager's work \cite{Hager2024} took a comprehensive approach by assessing the security guarantees and limitations of SCION across three different deployment scenarios.
 Hager identified various attack vectors, including hardware, operating system, SCION network management, or different network connection in the scenarios.
 For the latter, the study evaluated the likelihood of various network attacks --- such as packet sniffing, DDoS, Man-in-the-Middle, route hijacking, and AS spoofing --- and their extent of damage in the different scenarios.
@@ -40,21 +40,21 @@ As this work was in collaboration with the federal department of defense, the wo
 Our research deals with the secure deployment of SCION specifically at the CYD Campus and evaluates its robustness against various network attacks.
 
 
-\section{Operational Device Security}
+\paragraph{Operational Device Security}
 \label{sec:operational-device-security}
 Maurer \cite{Maurer2021} from the Swiss Stock exchange (SIX) examined the security of the operational devices.
 He developed a forensic framework that serves as a knowledge base for future forensic investigations on the SCION systems.
 Based on the tool \textit{Lynis} an automated security audit was conducted to identify potential vulnerabilities and misconfigurations.
 In general the system was found to be secure and well configured, but some minor issues were identified.
 Especially the audit-logging and the monitoring of the system were found to be insufficient.
-This work is closely related to our analysis, as we also focus on the security and configurations of the operational devices here at CYD Campus.
+This work is closely related to our analysis, as we also focus on the security and configurations of the operational devices at the CYD Campus.
 However, given the changes in the SCION ecosystem over recent years, a new security analysis is required to evaluate the current security guarantees.
 
-\section{Practical Application}
+\paragraph{Practical Application}
 Lastly, we want to mention the practical work of Niederer \cite{Niederer2022}, which among other things analyzed and accompanied the setup of the operational SCION devices at the CYD Campus.
 Thanks to his work and efforts, we are now able to concentrate on the security of SCION within the CYD Campus setting.
 
-\section{Conclusion}
+\paragraph{Conclusion}
 This chapter reviewed significant contributions to the security analysis of SCION, highlighting the evolution of research from early evaluations to recent studies on deployment and operational device security.
 Despite these contributions, SCION and especially its deployment have undergone substantial evolution since these studies.
 Our analysis aims to provide an updated, relevant evaluation that bridges the gap between past research and current needs.
