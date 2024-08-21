@@ -4,7 +4,7 @@
 % Describe the architecture of your implementation and explain the choices you made.
 % Why did you use library X instead of Y?
 
-In this chapter we present our implementation of the different components that we used to conduct our experiments.
+In this chapter, we present our implementation of the different components that we used to conduct our experiments.
 We will first describe the setup and configuration of the Kali machines, as well as the use of the open-source SCION implementation.
 Subsequently, in \cref{sec:impl:SCIONpackets}, we will explain the processes for generating and modifying SCION packets.
 \cref{sec:impl:attackerModel} details the implementation of the different attack models.
@@ -12,7 +12,7 @@ Finally, \cref{sec:impl:VolumetricDoS} explains how we conducted the volumetric 
 
 \section{Kali Machines}
 
-The Kali virtual machines mentioned in \cref{sec:setup} contain numerous tools and software for performing different penetration tests.
+The Kali virtual machines mentioned in \cref{sec:setup} contain numerous tools and software for performing penetration tests.
 We upgraded these machines to include all the additionally needed programs that were listed in \cref{sec:analysis-methods-tools}.
 
 To interact with SCION, we installed the SCION end host stack on the Kali machines.
@@ -36,12 +36,12 @@ By leveraging the open-source code, we can validate certain hypotheses and deter
 
 \section{SCION Packets}
 \label{sec:impl:SCIONpackets}
-Typically, SCION packets are not directly accessible to the user as they are generated and send by a SCION application, such as the \texttt{scion} binary.
+Typically, SCION packets are not directly accessible to the user as they are generated and sent by a SCION application, such as the \texttt{scion} binary.
 However, for our experiments, we needed to generate and modify custom SCION packets.
 The Python library \texttt{scapy}, with its SCION extension, facilitates this process.
 It allows stacking different headers on top of each other and defining every field of them.
 This capability enabled us to generate SCION packets with custom payloads and headers.
-To send and receive SCION packets, \texttt{scapy} does not even require a running SCION dispatcher or daemon.
+To send and receive SCION packets, \texttt{scapy} does not require a running SCION dispatcher or daemon.
 Nonetheless, in our implementation, we use the SCION end host stack to fetch the path information, which we then use to generate SCION packets with valid path headers.
 
 
@@ -93,8 +93,7 @@ In certain scenarios, we also consider the Anapaya device within the attacker's 
 \subsection{Non-SCION Adversary}
 To simulate an attacker without SCION access, we could utilize any device that is not connected to the SCION network.
 For this purpose, we select a device connected to the traditional Internet and located outside the CYD Campus.
-\TODO{Check}
-ETH Zürich provided a virtual machine, which allows us to conduct our attacks.
+ETH Zürich provided access to their network as well as a dedicated server from which we can launch attacks.
 An advantage of this setup is that both ETH Zürich and the CYD Campus in Zürich share the same Internet service provider, SWITCH.
 This allows for simpler coordination of specific attacks, such as volumetric denial-of-service attacks.
 
@@ -102,11 +101,16 @@ This allows for simpler coordination of specific attacks, such as volumetric den
 \section{Volumetric DoS Attack}
 \label{sec:impl:VolumetricDoS}
 As mentioned in the previous section, we used the external attacker to simulate a volumetric denial-of-service attack.
+In this section we describe the implementation of this attack.
 
-We used TRex \cite{trexWebsite} to generate a high amount of traffic towards to CYD Campus location in Zürich.
+We utilize TRex, to generate the high volume of traffic required for this attack.
+At ETH Zürich a server was set up with two 10 Gbit/s network interfaces and hosting the TRex docker container.
+This setup provides the necessary infrastructure to generate a high throughput of traffic.
+We instructed TRex to repeatably send many big UDP packets towards the public IP of the CYD Campus location in Zürich.
 
-To measure the impact on SCION, we use the following two SCION tools:
-From Thun we use \texttt{scion ping} to check if the SCION AS is still reachable.
-Additionally, to measure how much bandwidth is still available, we use the \texttt{scion-bwtester} tool \cite{Scionappsbwtester}.
-We chose to make these SCION measurements from Thun, because has a better network infrastructure, for example Thun has a higher bandwidth available than Lausanne (10 Gbit/s vs. 1 Gbit/s).
+To assess the impact of the attack on SCION's functionality, we employed two SCION-specific tools.
+First, we utilize \texttt{scion ping} to verify the continued reachability of the SCION AS under attack.
+Second, to evaluate the remaining available bandwidth, we use the \texttt{scion-bwtester} tool.
 
+We chose Thun as the measurement point due to its superior network infrastructure compared to Lausanne, offering a significantly higher bandwidth capacity (10 Gbit/s vs. 1 Gbit/s).
+This choice ensures that any observed degradation in performance could be more directly attributed to the DoS attack rather than limitations in the network infrastructure.

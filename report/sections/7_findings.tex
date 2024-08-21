@@ -12,13 +12,14 @@
 %     * Provide intuition on why certain design choices were taken, why alternatives were rejected
 %     * Describe a strawman approach, show why it's inadequate
 
-In this chapter, we present the results of our comprehensive security analysis of the CYD SCION system.
-It was conducted through the end of June 2024, after which we reported and discussed our findings with Anapaya.
-In response, Anapaya addressed several of the identified vulnerabilities and released updated software versions for the routers in July.
+In this chapter, we present the results of our comprehensive security analysis of the CYD Campus SCION system.
+It was conducted from late March 2024 through the end of June 2024.
+Following our assessment, we reported and discussed our findings with Anapaya in early July 2024.
+In response, Anapaya addressed several identified vulnerabilities and released updated software versions for the routers also in July.
 After updating the routers, we performed a re-evaluation of the system to assess the effectiveness of the fixes.
 
 We begin this chapter with a brief overview of the findings.
-The subsequent sections \cref{sec:findings:scion-protocol} and \cref{sec:findings:anapaya-router} provide a detailed description of each finding, incorporating Anapaya's statement and an assessment of the current status after the update.
+The subsequent Sections \cref{sec:findings:scion-protocol} and \cref{sec:findings:anapaya-router} provide a detailed description of each finding, incorporating Anapaya's statement and an assessment of the current status after the update.
 The chapter concludes with the results from our volumetric DoS attack on the SCION network.
 
 \section{Overview}
@@ -26,6 +27,7 @@ The chapter concludes with the results from our volumetric DoS attack on the SCI
 
 The following table summarizes the findings of our security analysis.
 It provides a brief description of each finding, its severity, and whether it has already been mitigated by Anapaya.
+Severity levels are categorized as critical, high, medium, or low, depending on the potential impact of each finding.
 The first column also includes references to the sections where the finding is discussed in more detail.
 
 % \begin{table}
@@ -37,61 +39,13 @@ The first column also includes references to the sections where the finding is d
     \textbf{Finding} & \textbf{Summary} & \textbf{Severity} & \textbf{Mitigated} 
     \\ \hline
 
-    Master Secret Refreshment (\cref{sec:mac-algorithm}) &
-    The master secret used for deriving the MAC key is not refreshed daily, which is recommended for maintaining good cryptographic hygiene. &
-    Medium &
-    No
-    \\ \hline
-
-    Source Authentication (\cref{sec:source-authentication}, \cref{sec:spoofing}, \cref{sec:path-extension}, \cref{sec:path-header-modification}) &
+    Missing Source Authentication (\cref{sec:source-authentication}, \cref{sec:spoofing}, \cref{sec:path-extension}, \cref{sec:path-header-modification}) &
     The SCION protocol in use does not provide source authentication based on DRKey, allowing for impersonation, spoofing and path modification attacks. &
     Critical &
     No
     \\ \hline
 
-    Egress Filtering (\cref{sec:spoofing}, \cref{sec:path-extension}) &
-    There is no source egress filtering in place.
-    This allows to spoof the source information and extend the path header, potentially leading to reflection amplification attacks. &
-    High &
-    No
-    \\ \hline
-
-    SSH Configuration (\cref{sec:ssh}) &
-    The SSH configuration has some weaknesses and allows using less secure algorithms.
-    Additionally, there is no rate limiting on login attempts, making the router vulnerable to the DHEat attack. &
-    Medium &
-    Partially
-    \\ \hline
-
-    Ubuntu Compliance (\cref{sec:ubuntu-compliance}) &
-    The Anapaya routers do not fully comply with the CIS Ubuntu Linux 22.04 LTS audit.
-
-    We identified several misconfigurations, including the lack of password policy, missing shell timeout, world-writable directories, and enabled SSH root login. &
-    Medium &
-    Partially
-    \\ \hline
-
-    Systemd Services (\cref{sec:systemd-services}) &
-    Many systemd services have a high exposure score, suggesting a high attack surface and a lack of hardened configuration. &
-    Medium &
-    No
-    \\ \hline
-
-    Vulnerabilities (\cref{sec:vulnerabilities}) &
-    The software on Anapaya routers contains several vulnerabilities, including unused binaries, outdated libraries, and kernel vulnerabilities.
-    Some of these vulnerabilities can be exploited remotely. &
-    Low - High &
-    Partially
-    \\ \hline
-
-    Docker (\cref{sec:docker}) &
-    The Docker image used to run the SCION services is based on an outdated distroless Debian image and contains unused and vulnerable binaries.
-    Additionally, Docker's live restore feature is disabled, and resource limits for individual containers are not set. &
-    Medium &
-    Partially
-    \\ \hline
-
-    Management System (\cref{sec:management-system}) &
+    Insecure Management System Access (\cref{sec:management-system}) &
     The management systems of the CYD Anapaya routers are misconfigured to allow access without any authentication.
     Additionally, authentication is disabled by default.
     Any AS-local user can access the management web interface and API, allowing for significant changes to the router's configuration. &
@@ -99,11 +53,59 @@ The first column also includes references to the sections where the finding is d
     No
     \\ \hline
 
-    Web Server (\cref{sec:web-server}) &
+    Web Server Denial of Service (\cref{sec:web-server}) &
     The web server used for the management system is vulnerable to a denial of service attack known as Rapid Reset.
     This attack consumes the router's resources and eventually crash it, taking down all SCION services. &
     Critical &
     Yes
+    \\ \hline
+
+    Lack of Egress Filtering (\cref{sec:spoofing}, \cref{sec:path-extension}) &
+    There is no source egress filtering in place.
+    This allows to spoof the source information and extend the path header, potentially leading to reflection amplification attacks. &
+    High &
+    No
+    \\ \hline
+
+    Software Vulnerabilities (\cref{sec:vulnerabilities}) &
+    The software on Anapaya routers contains several vulnerabilities, including unused binaries, outdated libraries, and kernel vulnerabilities.
+    Some of these vulnerabilities can be exploited remotely. &
+    Low - High &
+    Partially
+    \\ \hline
+
+    No Master Secret Refreshment (\cref{sec:mac-algorithm}) &
+    The master secret used for deriving the MAC key is not refreshed daily, which is recommended for maintaining good cryptographic hygiene. &
+    Medium &
+    No
+    \\ \hline
+
+    Weak SSH Configuration (\cref{sec:ssh}) &
+    The SSH configuration has some weaknesses and allows using less secure algorithms.
+    Additionally, there is no rate limiting on login attempts, making the router vulnerable to the DHEat attack. &
+    Medium &
+    Partially
+    \\ \hline
+
+    Ubuntu CIS Compliance Issues (\cref{sec:ubuntu-compliance}) &
+    The Anapaya routers do not fully comply with the CIS Ubuntu Linux 22.04 LTS audit.
+
+    We identified several misconfigurations, including the lack of password policy, missing shell timeout, world-writable directories, and enabled SSH root login. &
+    Medium &
+    Partially
+    \\ \hline
+
+    Exposed Systemd Services (\cref{sec:systemd-services}) &
+    Many systemd services have a high exposure score, suggesting a high attack surface and a lack of hardened configuration. &
+    Medium &
+    Partially
+    \\ \hline
+
+    Docker Issues (\cref{sec:docker}) &
+    The Docker image used to run the SCION services is based on an outdated distroless Debian image and contains unused and vulnerable binaries.
+    Additionally, Docker's live restore feature is disabled, and resource limits for individual containers are not set. &
+    Medium &
+    Partially
     \\ \hline
 
 
@@ -155,7 +157,19 @@ Upon altering the MAC value or introducing unauthorized hop fields, the packet w
 This check ensures that no new path can be created, not even by combining it out of two valid ones.
 Our tests confirmed the infeasibility of these manipulations.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``The Anapaya appliance is inline with the current SCION ecosystem where there is currently no automatic forwarding key rollover. Our appliance relies on the open source implementation for path creation and discovery.
+The issue is known and on the roadmap of the open source implementation https://github.com/scionproto/scion/issues/4348.
 
+However, we want to highlight that there is currently no practical attack on AES-CMAC to recover the key.
+Thus a successful attack is unlikely. Furthermore, in a scenario of a key compromise, an AS can manually roll over their key at will.''
+\end{boxH}
+
+\paragraph{Current Status:}
+The current implementation of the MAC algorithm on Anapaya routers remains unchanged, with no mechanism for key refresh in place.
+Despite recommendations for implementing daily master secret refreshes to improve cryptographic hygiene, this feature has not yet been adopted.
+While the AES-CMAC algorithm in use continues to be secure, the absence of a daily key refresh remains a notable area for future enhancement within the SCION protocol and its implementations.
 
 \subsection{Source Authentication / DRKey}
 \label{sec:source-authentication}
@@ -163,8 +177,21 @@ Following the cryptographic analysis of the MAC algorithm, we examined another c
 This analysis turned out to be a short one, as we found that DRKey is not used in the SCION implementation on the Anapaya routers.
 The lack of DRKey support enables various attacks on the SCION network.
 For example, unauthenticated SCMP error messages can be injected into the network.
-By sending an external interface down SCMP error message, an off-path attacker can possibly force retransmission of SCION packets on another path.
+By sending an \textit{external interface down} SCMP error message, an off-path attacker can possibly force retransmission of SCION packets on another path.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``The Anapaya appliance is inline with the current SCION ecosystem where there is currently no support for SCMP authentication. The SCION community has not reached a final agreement on whether SCMP authentication should be supported, or in what manner.
+
+We want to highlight that there are also mitigation strategies without SCMP Authentication. E.g., by validating the quoted packet in the SCMP message has been sent by the application.''
+\end{boxH}
+
+
+\paragraph{Current Status:}
+Although DRKey support and SCMP message authentication were introduced in the open-source version of SCION with release v0.9.0 on October 17, 2023, these features remain experimental and are disabled by default \cite{SCIONReleaseV090}.
+Despite the availability of DRKey in the SCION ecosystem, Anapaya has not yet adopted this functionality.
+During the disclosure process, we emphasized to Anapaya that enabling DRKey could substantially enhance network security and facilitate the development of new applications relying on this technology.
+However, Anapaya has not incorporated DRKey in their current implementation, therby leaving the network vulnerable to attacks such as unauthenticated SCMP error message injection.
 
 
 \subsection{Spoofing}
@@ -178,16 +205,23 @@ This scenario would result in a successful spoofing, where the spoofed location 
 Moreover, this can lead to reflection amplification attacks, particularly when the destination sends more data than the sender initially transmitted.
 This can be exploited to launch denial-of-service attacks against the spoofed location.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``This is a hypothetical scenario with a server that is susceptible to reflection attacks by spawning path requests based on unconnected requests. None of the Anapaya authored applications behave this way, nor are we aware of any applications in the SCION ecosystem with this behavior. Well authored server applications should not do work in response to unconnected client requests.''
+\end{boxH}
+
 We also attempted to force a path lookup at the recipient, assuming it would reverse the path information to reply.
 The strategy involves using path segments that are about to expire.
 The initial packet would use valid path segments, but when the destination reverses the path during the reply, the path segments would have already expired.
 Depending on the application this could lead to a forced path lookup based on the spoofed source information, resulting in successful spoofing.
 However, during our analysis, we observed that the Anapaya border router implementation drops network packets that have a path information that is going to expire in the next 30 seconds or less.
-Unless an application requires more than 30 seconds to respond, a forced path lookup with nearly expired path information is prevented.
+This behavior shifts the attack windows from the actual expiration time to 30 seconds prior to it.
+
 
 This is a significant divergence from the open-source implementation.
-As illustrated in the pseudocode below, the open-source implementation only checks if the packet has expired based on the current time.
+As illustrated in the pseudocode in \cref{lst:hop-expiry}, the open-source implementation only checks if the packet has expired based on the current time.
 It does not account for the 30 additional seconds as observed in the Anapaya implementation.
+
 
 
 \begin{lstlisting}[language={Go}, morekeywords={}, caption={Pseudocode of hop expiry check in open-source implementation of the border router.}, label={lst:hop-expiry}]
@@ -210,7 +244,18 @@ Source authentication is another effective solution to mitigate these attacks.
 SPAO based on DRKey even provides source authentication on the first packet sent.
 However, for this to be used, the DRKey feature must first be enabled by Anapaya.
 
+\begin{boxH}
+    \paragraph{Anapaya:}
+    ``[...] the DRKey feature needs to be first accepted by the SCION community. As soon as it is, Anapaya will of course add support for it.''
+\end{boxH}
 
+
+\paragraph{Current Status:}
+Spoofing remains possible due to the absence of outbound source filtering, which continues to allow source information to be manipulated.
+While some attacks are currently hypothetical, they could pose real risks if conditions change or if applications do not adhere to best practices.
+Additionally, while the implementation's path expiry behavior differs from the open-source version, this issue has not yet been addressed or rectified.
+Recommendations for implementing egress source filtering and enabling the DRKey feature to enhance source authentication are still pending adoption.
+As a result, the vulnerabilities related to spoofing persist, and addressing them remains a crucial step for improving overall security.
 
 
 \subsection{Path Extension}
@@ -220,7 +265,18 @@ During our security analysis, we attempted to achieve this by altering and exten
 As presented in the previous section, the source information can be spoofed.
 Leveraging this knowledge, we modified the source to be a different (even made up) AS.
 Additionally, we prepended the path header with extra hop fields and set the hop field index to the correct value.
-These modifications make it appear as if the packet was sent by a customer of our AS.
+These modifications to the path header are illustrated in \cref{extended_path_header}.
+The hop fields marked in red represent the additional entries we inserted, while the ones fields indicate the original fields.
+The up-segment length is set to eight, reflecting the inclusion of the six extra hops.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{extended_path_header.drawio.png}
+    \caption{Extended path header with additional hop fields.}
+    \label{extended_path_header}
+\end{figure}
+
+The adjustments cause the packet to appear as if it was sent by a customer of our AS.
 The modified packet was successfully transmitted to the destination, which reverted the path information and sent the reply back to our AS.
 This demonstrates that the path header can be extended with additional and invalid hop fields, allowing for the spoofing of the AS that originated the connection.
 Implementing a simple check to filter packets with a hop field index set to zero (i.e., pointing to the first hop) for packets originated from AS-local end hosts would mitigate this issue.
@@ -245,6 +301,18 @@ The results indicate that the processing time for the SCION pings with the maxim
 This simple evaluation demonstrates that the impact of extending the path to its maximum length is minimal and largely negligible.
 
 
+\begin{boxH}
+    \paragraph{Anapaya:}
+    ``We will introduce egress filtering in an upcoming release.
+    However, we deem the risk of this affecting real applications as very low.''
+\end{boxH}
+
+\paragraph{Current Status:}
+Anapaya has recognized the difficulty of implementing a check for zero hop fields due to the complexities of distinguishing local AS traffic from sibling router traffic.
+Despite these challenges, they are committed to introducing this check in an upcoming release.
+This measure is expected to mitigate the risk posed by malicious end hosts attempting to exploit path extension vulnerabilities.
+Therefore, the added check will reduce the potential for spoofing attacks by filtering out invalid path extensions, thereby improving the security of the SCION network against such threats.
+
 \subsection{Path Header Modification}
 \label{sec:path-header-modification}
 This section addresses the modification of the path header by an on-path attacker rather than by the source.
@@ -259,10 +327,19 @@ A SCION built in solution would be the SCION packet authenticator option, but th
 Therefore, clients must implement their own solutions to ensure the integrity of the path header.
 For instance, this can be achieved by adding a MAC to the entire packet or by comparing the path information of the received packet with the expected path information.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``This attack is feasible in the base SCION protocol, hence there is no mitigation in the Anapaya appliance. As soon as the DRKey feature has been accepted by the SCION community and an implementation is available, it will be integrated in the Anapaya appliance.''
+\end{boxH}
 
-
-
-
+\paragraph{Current Status:}
+The current status regarding path header modification reveals that this vulnerability remains exploitable.
+An attacker can still intercept and alter the path header of a SCION packet, rerouting it according to their own choice, while the sender remains unaware due to the potential for the path modifications to be reverted in replies.
+Although this attack vector is confirmed to be feasible within the CYD SCION network, the situation is somewhat mitigated by SCION's concept of isolation domains.
+ISDs restrict routing paths so that communication parties within the same ISD can only communicate on paths that remain within the same ISD, thus limiting the impact of such attacks.
+However, this does not eliminate the risk entirely.
+To address this issue effectively, it is essential that SCION users and Anapaya customers are made more aware of this vulnerability.
+In the absence of SPAO on Anapaya routers, clients are advised to implement their own integrity protection measures, such as incorporating a MAC for the entire packet or verifying the path information against expected values.
 
 \section{Anapaya Router}
 \label{sec:findings:anapaya-router}
@@ -323,6 +400,18 @@ However, due to the SCION dataplane's allocation on a dedicated CPU core, the im
 Nonetheless, other services, such as new SSH login attempts, experienced delays or were not even possible anymore.
 To mitigate this attack, it is recommended to implement rate limiting on the SSH server, as it was shown in detail in this blog post \cite{dheatAnalysis}.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``The firewall rules on the Anapaya appliance can be adjusted to enable rate limiting. In a future release, we will change the default firewall configuration to also take rate limiting into account.''
+\end{boxH}
+
+\paragraph{Current Status:}
+The SSH configuration on the Anapaya routers has undergone improvements since our initial disclosure.
+Anapaya has addressed the issue of weak algorithms by disabling those identified as compromised or vulnerable.
+Despite these enhancements, as of the time of writing, rate limiting has not yet been implemented on the SSH server.
+As a result, the system remains susceptible to the DHEat denial of service attack, which can overwhelm the server's CPU resources.
+Anapaya has acknowledged this issue and plans to incorporate rate limiting in a future version of the appliance's default configuration.
+
 
 \subsection{Ubuntu Compliance}
 \label{sec:ubuntu-compliance}
@@ -367,6 +456,23 @@ There are more compliance mismatches found during the audit.
 Mostly related to ensure clear audit trails, including monitoring and logging of security-relevant events, or to disable unnecessary kernel modules
 The full list of findings can be found \cref{app:automated-scan-result}.
 
+
+\begin{boxH}
+\paragraph{Anapaya:}
+``The Anapaya appliance is not intended as a general purpose OS, and thus does not have arbitrary user accounts. This reduces the risks of some of the violated compliance requirements considerably.
+
+For this reason, we also do not deem a strict password policy critical, given there are no arbitrary users on the system.''
+\end{boxH}
+
+
+\paragraph{Current Status:}
+The current status with respect to Ubuntu compliance on the Anapaya routers shows both partial improvements and ongoing concerns.
+Notably, the shell timeout configuration has been addressed, and the SSH \texttt{LoginGraceTime} parameter has been reduced to 60 seconds, enhancing security against brute-force attacks.
+Nevertheless, several other compliance issues remain unaddressed.
+Anapaya has determined that many of these issues are not critical due to the appliance's specific use case and lack of arbitrary user accounts.
+Despite this, some aspects, such as an enabled login prompt and disabled root SSH login, could still be crucial for organizations that need a clear audit trail or that face potential security incidents.
+The absence of these measures might complicate post-incident prosecution and auditing processes.
+
 \subsection{Security of systemd Services}
 \label{sec:systemd-services}
 As seen in the previous section, the routers operating system can be optimized to ensure a higher level of security.
@@ -383,7 +489,7 @@ In the following the output of the command and the scoring of the individual ser
 
 \TODO{Maybe try to add emojis here to output}
 
-\begin{lstlisting}[language=bash, deletekeywords={local}, numbers=none, caption={Output of \texttt{systemd-analyze security}}]
+\begin{lstlisting}[language=bash, deletekeywords={local}, numbers=none, caption={Output of \texttt{systemd-analyze security} on the device in Thun running Anapaya's system version v2.8.0.}]
 $ systemd-analyze security
 UNIT                                  EXPOSURE PREDICATE 
 ModemManager.service                       6.3 MEDIUM    
@@ -456,6 +562,19 @@ However, the high exposure score of 9.6 indicates that these services were not c
 They enjoy a high level of capabilities and practically no restrictions.
 We recommend reviewing the services and to restrict the rights to the minimum required for the services to function properly.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``We will assess how the surface of the systemd services can be reduced exposure where unneeded.''
+\end{boxH}
+
+\paragraph{Current Status:}
+The current state of the security of systemd services on the Anapaya routers reflects both progress and persistent issues.
+The latest software update has removed over ten services, including the \texttt{ModemManager} service, which was identified as unnecessary and potentially insecure.
+Despite these improvements, the systemd-rfkill service, which is also considered redundant for the routers' operational context, remains present.
+Moreover, services specific to Anapaya's specific functions, such as \texttt{appliance-controller} and \texttt{appliance-installer}, continue to exhibit high exposure levels, with scores of 9.6.
+
+While steps have been taken to reduce the attack surface, further actions are recommended to address the high exposure levels and ensure that all services are configured with optimal security measures.
+
 
 \subsection{Vulnerabilities}
 \label{sec:vulnerabilities}
@@ -476,7 +595,17 @@ It is recommended to either update the affected packages or, preferably, remove 
 
 A detailed report on all identified vulnerabilities can be found in \cref{app:automated-scan-result}.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``At the time of scanning for these vulnerabilities, Anapaya has already published multiple newer releases of the anapaya-system packages with patches for the aforementioned vulnerabilities. The packages have simply not been installed.''
+\end{boxH}
 
+\paragraph{Current Status:}
+The most recent software releases have mitigated the majority of the vulnerabilities previously identified.
+However, some concerns persist, including outdated versions of OpenSSL within Docker containers and vulnerable Python and OpenSSL libraries on the system.
+Additionally, certain vulnerabilities persist on the device located in Thun, which has not been updated to the latest version by Swisscom.
+Notably, it is vulnerable to the critical vulnerabilities related to the Intel Ethernet controller driver.
+It is recommended to update or remove outdated and unused software to further reduce the attack surface and enhance overall system security.
 
 \subsection{Docker}
 \label{sec:docker}
@@ -503,11 +632,35 @@ Finally, to further improve availability, we suggest implementing resource limit
 The inspected systems currently lack resource limits for the Docker containers.
 Setting such limits would prevent a single container from consuming all the router's resources, potentially crashing it and impacting all SCION services.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``The next release v0.37 will include docker images based on debian 12. The docker live restore feature is disabled on purpose as we implement our own watchdog functionality to bring back the services. Most docker based services did have CPU limits set, but lacked memory limits in older releases. As of v0.36, most services have both CPU and memory limits set. Furthermore, the operator can tune these limits via the appliance configuration to further harden their system.
+''
+\end{boxH}
+
+\paragraph{Current Status:}
+The transition to a Debian 12 base image is confirmed for the next release, addressing the need for an updated and secure foundation.
+Additionally, the use of the no-ssl variant of the distroless image is anticipated, which will eliminate unnecessary and potentially vulnerable binaries.
+
+Resource limits for Docker containers, though present in version 0.36, are not activated by default.
+This lack of default configuration makes it challenging for administrators to determine appropriate resource allocations for individual containers.
+To enhance overall system stability and prevent resource exhaustion by any single container, it is recommended that Anapaya implement predefined resource limits.
 
 
 \subsection{Management System}
 \label{sec:management-system}
-Currently, no authentication is required for the CYD SCION users to access the Anapaya router's management web interface or management API.
+The management system of Anapaya enables administrators to easily configure their SCION setup.
+This system is accessible via an API or a web interface.
+The latter is shown in \cref{fig:anapaya_web_interface}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{management_web.png}
+    \caption{Anapaya router's management web interface.}
+    \label{fig:anapaya_web_interface}
+\end{figure}
+
+Currently, no authentication is required for the CYD SCION users to access the management system.
 Access is granted solely based on knowledge of the IP address of the border router.
 This configuration allows users to make significant changes to the border router's configuration, including the following:
 
@@ -524,24 +677,56 @@ This lack of authentication was also present on the test device, which shows tha
 This observation is consistent with the official Anapaya documentation, which states that basic authentication is disabled by default \cite{anapayaManagemenDoc}.
 To improve the security of the device and especially the SCION configuration, it is recommended to enable authentication for the management system.
 We also encourage Anapaya to enable basic password authentication by default for newly deployed devices.
+\TODO{clearify situation}
+
+\begin{boxH}
+\paragraph{Anapaya:}
+``The Anapaya appliance has a default password configured when it is freshly installed from the base image. The user has to actively push a configuration to with basic auth not enabled for it to be disabled.
+We encourage CYD to enable basic auth in their configuration on their appliances to remedy the situation.
+
+We will assess how we can make not enabling basic auth an even more conscious choice.''
+\end{boxH}
+
+\paragraph{Current Status:}
+Currently, the Anapaya router's management system remains without default authentication, requiring manual configuration by administrators to enable it.
+Access to the management web interface and API is still granted solely based on knowledge of the router's IP address, with no inherent authentication mechanisms in place.
+The latest software releases even allow for the configuration of device users and authentication, including SSH keys.
+Consequently, the absence of authentication on the management system enables attackers to add their SSH keys as well as removing existing ones.
+This leads to unauthorized access and complete takeover of the device.
 
 
 \subsection{Web Server}
 \label{sec:web-server}
 The management system is also being served by a web server running on the router, accessible to any AS-local SCION user or any remote user in an AS with a configured SIG connection.
 The web server in use is Caddy, version 2.6.4, released in February 2023.
-This version is vulnerable to a denial of service attack known as Rapid Reset, which consumes the routers resources and eventually crashes it, thereby taking down all its services, including SCION.
-The Rapid Reset attack exploits the HTTP/2 protocol's capability to open multiple streams within a single TCP connection.
-An attacker can misuse this feature by simultaneously opening a large number of streams and then instantly closing them again.
-By closing the streams right after opening, the attacker ensures that the number of active streams never exceed the limit allowed by the server.
+This version is vulnerable to a denial of service attack known as Rapid Reset \cite{googleWorksNovel}, which exhausts the routers resources and eventually crashes it, thereby taking down all its services, including SCION.
+The Rapid Reset attack is depicted in \cref{fig:rapid_reset} and exploits the HTTP/2 protocol's capability to open multiple streams within a single TCP connection.
+Unlike standard HTTP/2 attacks that are constrained by a server-defined limit of open streams (e.g., 100 streams), the Rapid Reset attack can rapidly open and close an unlimited number of streams.
+The stream closure (i.e., resetting) is accomplished by sending a RST\_STREAM frame.
+By opening and closing streams in quick succession, the attacker ensures that the number of active streams remains within the server's limit.
 Nonetheless, the server still has to perform substantial work for these canceled requests, including allocating memory for a new stream, parsing the query, performing header decompression, and other tasks \cite{googleWorksNovel}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{rapid_reset.png}
+    \caption{Illustration of HTTP/2 attacks \cite{googleWorksNovel}.}
+    \label{fig:rapid_reset}
+\end{figure}
 
 By modifying the code in an existing proof-of-concept attack \cite{githubGitHubMicrictorhttp2rststream}, we were able to attack our Anapaya router and finally taking it down withing a few seconds.
 Notably, this attack is effective even when the management system is configured with authentication, as the web server itself is not protected by it.
 
 The recommended solution to mitigate this vulnerability is to update the Caddy web server to version 2.7.5 or later, which addresses the Rapid Reset attack \cite{githubReleasesCaddyservercaddy}.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``The system package includes Caddy 2.7.5 as of version v2.9.0 which was released on 14.02.2024, and hence was already published at the time of the scan.''
+\end{boxH}
 
+\paragraph{Current Status:}
+Anapaya has upgraded the Caddy web server to version 2.7.5 and later, which effectively mitigates the Rapid Reset attack.
+As a result, the previously identified denial of service vulnerability, which exploited the HTTP/2 protocol to overwhelm and crash the router, is no longer a concern.
+As a result, the updated devices are protected from this attack vector, ensuring that the web server remains stable and resilient against similar exploitation attempts.
 
 \subsection{General Recommendations}
 \label{sec:general-recommendations}
@@ -555,7 +740,14 @@ In May 2024, CYD bought and received a new Anapaya Router.
 The system and SCION software versions on this new device were outdated and contained the software releases of autumn 2023 (end of September and mid of October).
 An improvement on Anapaya's side would be to ship the routers with a more recent software version, ideally the latest release.
 
+\begin{boxH}
+\paragraph{Anapaya:}
+``We always recommend that our customers keep the system package up-to-date to include the latest security patches.''
+\end{boxH}
 
+\paragraph{Current Status:}
+The current status of the update frequency of Anapaya routers remains unclear.
+There has been no confirmation on whether Anapaya has made improvements to ensure that routers are shipped with more up-to-date software versions.
 
 
 \section{Impact Traditional Internet on SCION}

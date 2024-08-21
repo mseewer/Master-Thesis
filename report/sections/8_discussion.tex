@@ -36,7 +36,7 @@ This includes a hardened SSH configuration, option to limit Docker container res
 Many compliance mismatches have already been criticized by Maurer's related work (see \cref{sec:operational-device-security} or his work \cite{Maurer2021}).
 Since Maurer's analysis was based on Ubuntu 18.04, his findings could have been used to improve the security standpoint of the current devices running Ubuntu 22.04.
 In general, most findings have little impact on SCION or require at least some level of access to the device.
-However, Rapid Reset attack on the web server and the lack of authentication on the management system pose significant risks, as they can be exploited without device access.
+However, the possible Rapid Reset attack on the web server and the lack of authentication on the management system pose significant risks, as they can be exploited without device access.
 Fortunately, many issues have been addressed and fixed by Anapaya's latest software releases.
 Nonetheless, the absence of default authentication on the management system remains a concern, as it can lead to a severe security compromises.
 Specifically, in newer management system versions, it is possible to remove existing SSH keys (thereby locking out legit users) or even to add new SSH keys for the root user.

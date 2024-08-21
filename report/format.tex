@@ -43,6 +43,8 @@
 %
 % Bibliography
 \usepackage{natbib}
+
+\usepackage[many]{tcolorbox}    	% for COLORED BOXES (tikz a
 %
 % Hyperref package for links in TOC, index, PDF metadata, bookmarks, etc.
 \usepackage[plainpages=false,pdfpagelabels,bookmarks=true,backref=false,pagebackref=false]{hyperref}
@@ -68,6 +70,8 @@
 \crefformat{section}{\S#2#1#3}
 \Crefformat{section}{Section~#2#1#3}
 \crefformat{footnote}{#2\footnotemark[#1]#3}
+\crefname{lstlisting}{listing}{listings}
+\Crefname{lstlisting}{Listing}{Listings}
 %
 % Basic source formatting
 \usepackage{listings}
@@ -94,6 +98,29 @@
 \definecolor{eth8}{HTML}{007A92}
 \definecolor{eth9}{HTML}{956013}
 \definecolor{eth10}{HTML}{82BE1E}
+
+\definecolor{main}{HTML}{5989cf}    % setting main color to be used
+\definecolor{sub}{HTML}{cde4ff}     % setting sub color to be used
+
+\newtcolorbox{boxH}{
+    colback = sub, 
+    colframe = main, 
+    boxrule = 0pt, 
+    leftrule = 6pt, % left rule weight
+    % only width of 75% of textwidth
+    width = 0.8\textwidth,
+    before=\begin{center}, 
+    after=\end{center}
+}
+
+\newtcolorbox{boxI}{
+    colback = sub, 
+    colframe = main, 
+    boxrule = 0pt, 
+    toprule = 6pt % top rule weight
+}
+
+
 %
 %
 % No single lines at the start of a paragraph ("Schusterjungen")

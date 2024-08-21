@@ -2,8 +2,9 @@
 \label{ch:methodology}
 
 This chapter outlines the methods used to analyze the security and potential vulnerabilities of the Anapaya version of SCION.
-The general approach is described in \cref{sec:general-approach}, followed by the concrete setup used in the assessment in \cref{sec:setup}.
-Finally, in \cref{sec:analysis-methods-tools}, specific methods and tools used are presented in more detail.
+The general approach is presented in \cref{sec:general-approach}, followed by the concrete setup used in the assessment in \cref{sec:setup}.
+\cref{sec:analysis-methods-tools} provides an in-depth look at the methods and tools used in the analysis.
+Finally, \cref{sec:methodology:disclosure} describes the disclosure process with Anapaya.
 
 
 \section{General Approach}
@@ -13,7 +14,7 @@ Given the proprietary nature of Anapaya SCION, this research employs a combinati
 
 \subsection{Exploratory Approach}
 The exploratory approach is utilized in this research to address the limited public knowledge about the Anapaya version of SCION.
-As Anapaya SCION incorporates proprietary modifications that are not fully documented, an exploratory approach is essential for uncovering and understanding these new or undocumented features.
+As Anapaya SCION incorporates proprietary modifications that are not fully publicly documented, an exploratory approach is essential for uncovering and understanding these new or undocumented features.
 The exploratory phase involves conducting preliminary investigations to identify potential vulnerabilities, security features, and other relevant aspects of the Anapaya SCION implementation.
 This includes a review of available documentation, security scans, and configuration checks to gather initial data on the system.
 
@@ -77,4 +78,24 @@ We use \textbf{Wireshark/tshark} \cite{wireshark} for packet capture because the
 To generate and modify SCION packets, the tools \textbf{scapy} \cite{scapy} with its SCION extension \cite{scapySCION} are used.
 It allows to easily define correctly formatted SCION packets and modify them as needed.
 
+
+\subsection{Volumetric Data Generation}
+To assess the impact of traditional Internet traffic on SCION, we conduct a volumetric denial-of-service attack.
+The primary objective of this attack is to saturate the target's network bandwidth, overwhelming it with a large volume of data packets.
+For generating the volumetric data, we use the TRex traffic generator \cite{trexWebsite}, a versatile and high-performance tool capable of simulating both stateful and stateless traffic.
+TRex allows customizing traffic parameters, enabling us to closely mimic real-world attack scenarios.
+We configure TRex to send a continuous stream of large data packets, thereby maximizing the use of on network resources.
+This approach allows us to evaluate the resilience of the SCION architecture under severe traffic conditions, offering valuable insights into its performance and robustness.
+
+\section{Disclosure Process}
+\label{sec:methodology:disclosure}
+
+The disclosure process followed a structured and collaborative approach with Anapaya to ensure both thorough evaluation and responsible communication of findings.
+Initially, we conducted independent penetration tests on the SCION infrastructure at the CYD Campus to identify potential security vulnerabilities and assess their impact.
+This independent assessment aimed to provide an unbiased analysis of the system.
+Following these tests, we held a discussion with Anapaya to share our preliminary findings and to obtain their insights and feedback.
+Anapaya then implemented necessary software updates to address the identified weaknesses and vulnerabilities.
+They were also given the opportunity to review and comment on the findings.
+We incorporated their feedback into the final report, ensuring that their perspectives and any additional insights were accurately reflected.
+Finally, Anapaya approved the publication of the results, allowing us to share the outcomes of the security analysis with the broader community.
 

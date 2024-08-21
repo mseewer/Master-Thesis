@@ -351,7 +351,7 @@ This is where the DRKey comes into play, which is explained in the next section.
 
 \subsubsection{Dynamically Recreatable Keys (DRKey)}
 \label{sec:drkey}
-This section explains the dynamically recreatable key (DRKey) system \cite{TODO} and its application within SCION.
+This section explains the dynamically recreatable key (DRKey) system \cite[Section 3.2]{Perrig2022} and its application within SCION.
 Since it relies on symmetric cryptographic keys, it is much faster than the CP-PKI.
 This allows for efficient packet authentication in the data plane at high bandwidths and mitigates the risk of Denial-of-Service (DoS) attacks that could occur with slower asymmetric cryptography.
 Nevertheless, the DRKey system uses CP-PKI to establish the initial keys.
@@ -394,9 +394,9 @@ Finally, the third level (host-to-host) key can be derived using the host-to-AS 
 
 The secrete value $SV$ can be different for different protocols and applications.
 
-\paragraph{SCION Packet Authentication Option}
+\paragraph{SCION Packet Authenticator Option}
 \label{sec:spao}
-One prominent application that uses DRKey is the SCION packet authentication option (SPAO) \cite{TODO}.
+One prominent application that uses DRKey is the SCION packet authenticator option (SPAO) \cite[Section 3.3]{Perrig2022}.
 SPAO is added to the SCION header of a data plane packet and provides source authentication between end hosts.
 Since even the first packet sent is authenticated, there is no need for explicit key exchange between end hosts.
 Additionally, SPAO also provides integrity protection of the packet.
