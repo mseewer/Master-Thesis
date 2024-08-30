@@ -8,7 +8,7 @@ In this chapter, we present our implementation of the different components that 
 We will first describe the setup and configuration of the Kali machines, as well as the use of the open-source SCION implementation.
 Subsequently, in \cref{sec:impl:SCIONpackets}, we will explain the processes for generating and modifying SCION packets.
 \cref{sec:impl:attackerModel} details the implementation of the different attack models.
-Finally, \cref{sec:impl:VolumetricDoS} explains how we conducted the volumetric denial-of-service attack.
+Finally, \cref{sec:impl:VolumetricDoS} explains how we conducted the volumetric denial-of-service attacks.
 
 \section{Kali Machines}
 
@@ -98,15 +98,27 @@ An advantage of this setup is that both ETH Zürich and the CYD Campus in Züric
 This allows for simpler coordination of specific attacks, such as volumetric denial-of-service attacks.
 
 
-\section{Volumetric DoS Attack}
+\section{Volumetric Attacks}
 \label{sec:impl:VolumetricDoS}
-As mentioned in the previous section, we used the external attacker to simulate a volumetric denial-of-service attack.
-In this section we describe the implementation of this attack.
+% As mentioned in the previous section, we used the external attacker to simulate a volumetric denial-of-service attack.
+% In this section we describe the implementation of this attack.
 
-We utilize TRex, to generate the high volume of traffic required for this attack.
-At ETH Zürich a server was set up with two 10 Gbit/s network interfaces and hosting the TRex docker container.
+We utilize TRex, to generate a high volume of traffic required for performing volumetric denial-of-service attacks.
+At ETH Zürich a server was set up with MT27800 Mellanox 100 Gbit/s network interface card and was running TRex version 2.87.
 This setup provides the necessary infrastructure to generate a high throughput of traffic.
-We instructed TRex to repeatably send many big UDP packets towards the public IP of the CYD Campus location in Zürich.
+We simulated two types of volumetric attacks: one from a non-SCION adversary and another from a malicious SCION end host.
+
+\begin{itemize}
+    \item \textbf{Traditional Internet:}
+    To simulate a volumetric attack from the non-SCION adversary, we instructed TRex to repeatably send many big UDP packets towards the public IP of the CYD Campus location in Zürich.
+    \item \textbf{SCION:} TRex does not natively support generating SCION packets.
+    To overcome this limitation, we wrote a script that creates a valid SCION packet including the path information to the border router at CYD Campus Zürich.
+    This script stores the packet in a PCAP file, which then can be replayed by TRex.
+    As before, the packet contains a large payload to maximize the use of network resources.
+\end{itemize}
+
+We got the allowance to generate up to 20 Gbit/s of traffic from the ETH network to the CYD Campus.
+But this limit is enough given that the link at the CYD Campus in Zürich has only a capacity of 10 Gbit/s.
 
 To assess the impact of the attack on SCION's functionality, we employed two SCION-specific tools.
 First, we utilize \texttt{scion ping} to verify the continued reachability of the SCION AS under attack.

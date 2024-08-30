@@ -80,8 +80,8 @@ It allows to easily define correctly formatted SCION packets and modify them as 
 
 
 \subsection{Volumetric Data Generation}
-To assess the impact of traditional Internet traffic on SCION, we conduct a volumetric denial-of-service attack.
-The primary objective of this attack is to saturate the target's network bandwidth, overwhelming it with a large volume of data packets.
+We assess the robustness of SCION by conducting volumetric denial-of-service attacks.
+The primary objective of such an attack is to saturate the target's network bandwidth, overwhelming it with a large volume of data packets.
 For generating the volumetric data, we use the TRex traffic generator \cite{trexWebsite}, a versatile and high-performance tool capable of simulating both stateful and stateless traffic.
 TRex allows customizing traffic parameters, enabling us to closely mimic real-world attack scenarios.
 We configure TRex to send a continuous stream of large data packets, thereby maximizing the use of on network resources.

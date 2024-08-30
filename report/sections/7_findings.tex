@@ -20,7 +20,7 @@ After updating the routers, we performed a re-evaluation of the system to assess
 
 We begin this chapter with a brief overview of the findings.
 The subsequent Sections \cref{sec:findings:scion-protocol} and \cref{sec:findings:anapaya-router} provide a detailed description of each finding, incorporating Anapaya's statement and an assessment of the current status after the update.
-The chapter concludes with the results from our volumetric DoS attack on the SCION network.
+The chapter concludes with the results from our volumetric DoS attacks on the SCION network.
 
 \section{Overview}
 \label{sec:findings:overview}
@@ -750,9 +750,59 @@ The current status of the update frequency of Anapaya routers remains unclear.
 There has been no confirmation on whether Anapaya has made improvements to ensure that routers are shipped with more up-to-date software versions.
 
 
-\section{Impact Traditional Internet on SCION}
-\label{sec:impact-traditional-internet}
-We analyzed the impact of the traditional Internet on CYD's SCION connection by running a volumetric denial-of-service attack.
+\section{Volumetric Attacks}
+\label{sec:volumetric-attacks}
 
-\TODO{Plots, text, etc.}
+In this section we will discuss the results of the volumetric attacks conducted against the CYD Campus network.
+The two plots shown in this section have the same structure and axis scaling.
+The x-axis represents the amount of traffic in Gigabits per second sent to the CYD Campus in Zürich.
+It is either Internet traffic or SCION traffic, depending on the attack.
+
+Each plot has a total of three y-axes:
+The blue y-axis and bars show the average SCION ping time including indicators for the standard deviation.
+The red y-axis and line plot indicate the experienced loss rate during the SCION pings.
+Finally, the green y-axis and its corresponding dotted line represent the achieved SCION throughput.
+
+\subsection{Internet Traffic}
+
+The impact of the traditional Internet on SCION is plotted in \cref{fig:internet_traffic}.
+Here x-axis represents the amount of Internet traffic in Gigabits per second sent to the public IP address of the CYD Campus in Zürich.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{internet_analysis_notitle.png}
+    \caption{Impact of volumetric Internet traffic on SCION.}
+    \label{fig:internet_traffic}
+\end{figure}
+
+The results show that the Internet traffic has no impact on SCION's performance between the CYD Campus locations.
+The ping times remain stable at around seven milliseconds round-trip time.
+Not a single ping packet was lost during the whole experiment.
+The achieved SCION bandwidth also remains constant at around 600 Mbit/s, regardless of the amount of Internet traffic sent.
+We can therefore conclude that the Internet and SCION links at the CYD Campus in Zürich are physically separated and do not interfere with each other.
+
+
+\subsection{SCION Traffic}
+
+The following plot in \cref{fig:scion_traffic} shows the impact of volumetric SCION traffic.
+The x-axis now represents the amount of SCION traffic in Gigabits per second sent towards the border router of the CYD Campus in Zürich.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{scion_analysis_notitle.png}
+    \caption{Impact of volumetric SCION traffic on SCION.}
+    \label{fig:scion_traffic}
+\end{figure}
+
+The picture for speeds up to 10 Gbit per second is similar to the Internet traffic.
+We again have a stable ping time of around seven milliseconds and no packet loss.
+The achieved SCION bandwidth is also stable at around 600 Mbit/s.
+
+Recall that the SCION uplink has a capacity of 10 Gbit/s.
+When sending 10 Gbit/s or more SCION traffic, we observe a significant degradation in performance.
+The ping times increase up to around 17 milliseconds, and its loss rate spikes up to 80\%.
+The achieved SCION bandwidth also degrades drastically and sometimes even drops to zero.
+In these situations the SCION bandwidth tester was not able to establish a connection to the other side.
+This behavior is expected, as the SCION uplink is saturated and the SCION traffic is dropped by the router.
+During our experiments, the router did not crash because of that high traffic load.
 

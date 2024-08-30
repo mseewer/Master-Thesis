@@ -27,8 +27,10 @@ The analysis revealed significant flaws, with Anapaya's implementation, includin
 These vulnerabilities enable attackers to forge packets, leading to various attack vectors that undermine the integrity and trustworthiness of the network.
 
 
-The third and final area of investigation evaluated the impact of the traditional Internet on SCION by conducing a real-world volumetric denial-of-service attack.
-\TODO{Mention vol dos test}
+The third and final area of investigation evaluated the impact of volumetric denial-of-service attacks on the SCION infrastructure.
+Our experiments demonstrated the importance of physically separating SCION and the traditional Internet to protect against non-SCION adversaries.
+Moreover, physical path separation and hidden paths are key to mitigating the impact of volumetric attacks originating from within the SCION network.
+Otherwise, the network remains vulnerable to such attacks, which can disrupt the availability of SCION services and impact its users.
 
 \\
 It became evident that while SCION provides a robust framework, the security of its implementation heavily depends on the rigor of operational practices and the constant evolution of security measures.
@@ -37,7 +39,7 @@ The vulnerabilities identified in this thesis highlight the need for continuous 
 In answering the thesis's key question, this research concludes that while SCION has the potential to fulfill its promise as a next-generation Internet architecture, the current implementation by Anapaya falls short in several critical areas.
 The identified weaknesses, if left unaddressed, could undermine the security and reliability that SCION aims to provide.
 However, these challenges are not insurmountable.
-The findings offer a clear roadmap for improving the security of SCION deployments, emphasizing the need for stronger source authentication mechanisms, more secure device configurations, and \TODO{vol dos}.
+The findings offer a clear roadmap for improving the security of SCION deployments, emphasizing the need for stronger source authentication mechanisms, more secure device configurations, and the use of hidden paths.
 
 Ultimately, this research contributes to the ongoing development and maturation of SCION, providing valuable insights that can help shape its future evolution.
 By addressing the vulnerabilities identified in this thesis, SCION can move closer to realizing its full potential as a secure and resilient Internet architecture for the modern digital world.
@@ -61,7 +63,7 @@ However, key areas for future work include CP-PKI, certificate management, or pa
 Future research could also explore the development and security of new SCION applications.
 This includes how these applications should handle critical scenarios, such as receiving unauthenticated SCMP error messages or managing requests with expired hop fields.
 
-Our work involved a volumetric denial-of-service attack from the traditional Internet and evaluating its impact on SCION.
+Our work involved volumetric denial-of-service attacks and evaluating its impact on SCION's performance.
 It would be interesting to assess the impact of other attacks originating from the traditional Internet.
 Additionally, future studies could evaluate the feasibility and the potential effects of these attack when happening directly within the SCION network.
 

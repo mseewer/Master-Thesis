@@ -43,7 +43,19 @@ Specifically, in newer management system versions, it is possible to remove exis
 This lack of authentication can lead to a full device compromise.
 To recover from such an attack the device has to be reset and reconfigured entirely, which can lead to a significant downtime.
 
-\TODO{ddos interpretation}
+As our volumetric experiments showed, it is important to protect the SCION network from volumetric denial-of-service attacks to ensure its availability.
+By physically separating the SCION and traditional Internet connections, a non-SCION adversary can not disrupt the SCION performance with a volumetric attack.
+
+However, the network is not immune to all volumetric attacks.
+We demonstrated that a SCION adversary can still disrupt the network by sending a large number of SCION packets.
+This attack can be extended with spoofed source addresses including fake path headers, which hides the true origin of the attack.
+One mitigation would be to use an extension of SCION called COLIBRI \cite[Section 10.2]{Perrig2022}, which provides bandwidth reservation for SCION paths.
+However, this extension again requires the DRKey system to authenticate the source.
+Another solution that is already possible today is to use hidden paths.
+These paths are not publicly known and are only shared with trusted parties.
+In our case, the hidden paths would only be shared with the CYD Campus network.
+Without the knowledge of these paths, an attacker would not be able to send SCION packets over them.
+It is important that the hidden and announced path are again physically separated as they share the same underling physical infrastructure.
 
 \section{Limitations}
 The analysis of the Anapaya devices was limited to those deployed at CYD Campus.
@@ -74,5 +86,7 @@ A timely update process is essential to mitigate the risk of successful attacks.
 
 Finally, for a secure SCION deployment, ensure that the SCION and traditional Internet connection are physically separated.
 This separation helps prevent certain attacks, such as volumetric denial-of-service, from impacting the SCION network and its users.
-\TODO{double check ddos recommendation}
+Moreover, hidden paths should be used to protect the network from volumetric attacks originating from within the SCION network.
+These paths should only be shared with trusted parties to prevent unauthorized access.
+Physical separation of hidden and public SCION paths is crucial to ensure a secure SCION deployment.
 
