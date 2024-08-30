@@ -1,0 +1,61 @@
+Start ping at Tue Aug 27 18:32:37 CEST 2024
+Resolved local address:
+  192.168.110.80
+Using path:
+  Hops: [64-2:0:2c 1>21 64-3303 1>17 64-559 24>1 64-2:0:2b] MTU: 1452 NextHop: 192.168.110.1:30042
+
+PING 64-2:0:2b,192.168.111.25:0 pld=0B scion_pkt=144B
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=0 time=6.727ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=1 time=7.119ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=2 time=9.447ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=3 time=7.117ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=4 time=7.178ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=5 time=7.082ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=6 time=7.232ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=7 time=7.184ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=8 time=7.079ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=9 time=7.080ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=10 time=7.123ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=11 time=7.242ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=12 time=7.011ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=13 time=7.210ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=14 time=7.145ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=15 time=7.157ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=16 time=7.009ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=17 time=7.124ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=18 time=7.225ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=19 time=7.128ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=20 time=6.967ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=21 time=7.044ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=22 time=8.545ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=23 time=9.679ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=24 time=6.878ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=25 time=6.862ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=26 time=6.712ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=27 time=8.961ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=28 time=6.972ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=29 time=7.139ms
+
+--- 64-2:0:2b,192.168.111.25 statistics ---
+30 packets transmitted, 30 received, 0% packet loss, time 30002.173ms
+rtt min/avg/max/mdev = 6.712/7.346/9.679/0.740 ms
+Start bwtest at Tue Aug 27 18:33:07 CEST 2024
+
+Test parameters:
+client->server: 10 seconds, 1300 bytes, 961538 packets
+server->client: 1 seconds, 4 bytes, 0 packets
+We need to sleep for 1 seconds before we can get the results
+We need to sleep for 1 seconds before we can get the results
+
+S->C results
+Attempted bandwidth: 0 bps / 0.00 Mbps
+Achieved bandwidth: 0 bps / 0.00 Mbps
+Loss rate: 0.0%
+Interarrival time min/avg/max/mdev = -0.000/0.000/0.000/0.000 ms
+
+C->S results
+Attempted bandwidth: 999999520 bps / 1000.00 Mbps
+Achieved bandwidth: 600724800 bps / 600.72 Mbps
+Loss rate: 39.9%
+Interarrival time min/avg/max/mdev = 0.005/0.017/16.933/4.113 ms
+End at Tue Aug 27 18:33:19 CEST 2024

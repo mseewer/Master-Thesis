@@ -1,0 +1,31 @@
+Start ping at Mon Aug 26 22:35:42 CEST 2024
+Resolved local address:
+  192.168.110.80
+Using path:
+  Hops: [64-2:0:2c 1>21 64-3303 1>17 64-559 24>1 64-2:0:2b] MTU: 1452 NextHop: 192.168.110.1:30042
+
+PING 64-2:0:2b,192.168.111.25:0 pld=0B scion_pkt=144B
+ERROR: external interface is down {interface=24; isd_as=64-559}
+ERROR: external interface is down {interface=24; isd_as=64-559}
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=5 time=17.167ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=6 time=17.523ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=8 time=17.311ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=9 time=17.352ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=10 time=17.257ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=12 time=17.476ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=15 time=17.281ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=24 time=17.525ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=27 time=17.390ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=28 time=29.852ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=29 time=17.458ms
+
+--- 64-2:0:2b,192.168.111.25 statistics ---
+30 packets transmitted, 11 received, 64% packet loss, time 31001.608ms
+rtt min/avg/max/mdev = 17.167/18.508/29.852/3.589 ms
+Start bwtest at Mon Aug 26 22:36:13 CEST 2024
+
+Test parameters:
+client->server: 10 seconds, 1300 bytes, 961538 packets
+server->client: 1 seconds, 4 bytes, 0 packets
+Fatal: could not receive a server response, MaxTries attempted without success
+End at Mon Aug 26 22:36:18 CEST 2024

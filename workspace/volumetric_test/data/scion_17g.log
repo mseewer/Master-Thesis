@@ -1,0 +1,32 @@
+Start ping at Mon Aug 26 22:37:15 CEST 2024
+Resolved local address:
+  192.168.110.80
+Using path:
+  Hops: [64-2:0:2c 1>21 64-3303 1>17 64-559 24>1 64-2:0:2b] MTU: 1452 NextHop: 192.168.110.1:30042
+
+PING 64-2:0:2b,192.168.111.25:0 pld=0B scion_pkt=144B
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=2 time=17.219ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=3 time=17.109ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=8 time=17.093ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=11 time=17.116ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=12 time=17.383ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=13 time=17.241ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=17 time=19.195ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=19 time=23.021ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=22 time=17.382ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=24 time=17.283ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=25 time=17.336ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=26 time=23.059ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=27 time=17.251ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=29 time=17.401ms
+
+--- 64-2:0:2b,192.168.111.25 statistics ---
+30 packets transmitted, 14 received, 54% packet loss, time 31001.858ms
+rtt min/avg/max/mdev = 17.093/18.221/23.059/2.031 ms
+Start bwtest at Mon Aug 26 22:37:46 CEST 2024
+
+Test parameters:
+client->server: 10 seconds, 1300 bytes, 961538 packets
+server->client: 1 seconds, 4 bytes, 0 packets
+Fatal: could not receive a server response, MaxTries attempted without success
+End at Mon Aug 26 22:37:51 CEST 2024

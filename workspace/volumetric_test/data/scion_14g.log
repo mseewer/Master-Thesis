@@ -1,0 +1,46 @@
+Start ping at Mon Aug 26 22:32:51 CEST 2024
+Resolved local address:
+  192.168.110.80
+Using path:
+  Hops: [64-2:0:2c 1>21 64-3303 1>17 64-559 24>1 64-2:0:2b] MTU: 1452 NextHop: 192.168.110.1:30042
+
+PING 64-2:0:2b,192.168.111.25:0 pld=0B scion_pkt=144B
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=0 time=17.189ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=1 time=17.268ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=2 time=17.289ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=3 time=29.433ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=4 time=17.472ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=5 time=17.295ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=8 time=17.496ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=10 time=17.392ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=11 time=17.315ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=12 time=17.309ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=15 time=17.647ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=16 time=17.462ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=19 time=17.367ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=23 time=25.026ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=28 time=17.394ms
+152 bytes from 64-2:0:2b,192.168.111.25: scmp_seq=29 time=17.461ms
+
+--- 64-2:0:2b,192.168.111.25 statistics ---
+30 packets transmitted, 16 received, 47% packet loss, time 31002.117ms
+rtt min/avg/max/mdev = 17.189/18.613/29.433/3.350 ms
+Start bwtest at Mon Aug 26 22:33:22 CEST 2024
+
+Test parameters:
+client->server: 10 seconds, 1300 bytes, 961538 packets
+server->client: 1 seconds, 4 bytes, 0 packets
+down: 0 1
+
+S->C results
+Attempted bandwidth: 0 bps / 0.00 Mbps
+Achieved bandwidth: 0 bps / 0.00 Mbps
+Loss rate: 0.0%
+Interarrival time min/avg/max/mdev = -0.000/0.000/0.000/0.000 ms
+
+C->S results
+Attempted bandwidth: 999999520 bps / 1000.00 Mbps
+Achieved bandwidth: 361308480 bps / 361.31 Mbps
+Loss rate: 63.9%
+Interarrival time min/avg/max/mdev = 0.005/0.018/17.227/4.148 ms
+End at Mon Aug 26 22:33:35 CEST 2024
