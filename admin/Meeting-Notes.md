@@ -373,3 +373,128 @@ TODO:
 
 ## 30.07.24
 DONE:
+- Structure:
+  - Abstract
+  - Acknowledgements
+  - Introduction
+    - Importance network security (more cyber threats, etc.)
+    - Anapaya/commercial SCION = emerging technology
+    - Motivation of CYD -> check what Confederation/Government is interested in
+    - Trust is good, control is better (check if Anapaya SCION is secure)
+    - short outline of thesis
+  - Related work
+    - works on security of SCION (in how much detail?)
+    - put related works in comparison to ours + show relevance of our work
+  - Background
+    - SCION
+      - Core Concepts (Scalability, Control, Isolation)
+      - Control plane: Path construction (PCB, MAC: calculation + verification)
+      - Data plane: path segment combination, SCION path header
+      - SCION Security/Authentication (a bit TRC, DRKey, SPAO)
+    - Anapaya
+      - role in SCION ecosystem
+    - Pentesting / Security Tools
+  - Problem Statement
+    - SCION open source != Anapaya SCION
+    - Attacker models (local end host, on-path, off-path, no SCION access)
+      - capabilities + impact of attacker (what can be disrupted)
+    - Impact of attacks (DoS (volumetric), path manipulation (data integrity), sniffing, spoofing, exploit misconfiguration)
+    - objectives of thesis:
+      - focus on operational devices
+      - SCION network in use (mostly data plane)
+      - separation SCION + normal internet
+  - Methodology
+    - general approach (explorative, due to new landscape of operational SCION devices + CYD network)
+    - SCION network
+      - CYD general structure + Kali VMs (config from BR) + test device
+      - ETH VM (VMs?)
+    - Automatic scans (Nessus, OpenVAS, SSH audit, systemd, compliance)
+      - to check security aspects of device
+    - manual investigation (SCION devices, SCION network, configuration)
+      - to check security aspects of device
+      - SCION network interactions / manipulation
+    - data collection (packet capture with tshark/wireshark, scapy)
+      - observing network flows
+      - analyzing packet structure
+  - Implementation
+    - use SCION end host stack (dispatcher, daemon)
+      - build from open source code
+      - used to send SCION packets
+      - fetch + save SCION paths
+    - General open source code
+      - used to verify hypotheses (if implementation is same in Anapaya SCION or not)
+    - SCION packets (manipulation, crafting)
+      - scapy + python code
+      - uses SCION end host stack
+    - How different attacker models were implemented/simulated
+    - volumetric DoS
+      - scion bwtester + scion ping
+      - measure impact on SCION network
+  - Findings
+    - SCION related findings
+    - Anapaya router findings
+  - Discussion
+    - interpretation of findings (relevance)
+    - compare to related work (e.g. some compliance findings were also found already in Maurer2021)
+    - future work
+  - Conclusion
+    - restate what goals were
+    - mention most important findings
+    - implication of work (Anapaya fixes some findings)
+
+- DoS:
+  - Iperf3: needs server + client (not realistic, but can measure achieved bandwidth)
+  - TRex: https://trex-tgn.cisco.com/trex/release/ -> take this one
+
+Public IP CYD: 195.176.0.50
+
+- Questions:
+  - How many details on related work?
+  - DoS: Status? IPs at CYD? Access ETH? SCION bw limitation?
+  - present / past tense
+
+- Goal: 
+  - End of week: related work - findings (except vol. DoS) written
+
+
+
+## 12.08.24
+TRex:
+- (OVA image: https://trex-tgn.cisco.com/trex/T_Rex_162_VM_Fedora_21.ova
+- Docker image)
+- x86 processor -> HW recommendations: https://trex-tgn.cisco.com/trex/doc/trex_manual.html#_download_and_installation
+- superuser privileges
+
+- Scrubbing at SWITCH? or ETH?
+- date/time ?
+
+- eher zu randzeiten, generell okay mit 10-20 gbit/s
+
+
+Feedback:
+- Related work: "et al"
+- cite from book at a specific page/section ? -> \cite[Section 2.3]{book}, \cite[p. 123]{book}
+- passive generell nicht gut oder wie?
+
+
+
+
+## 20.08.24
+- Presentation
+- CYD Public IP not reachable
+- TRex not working (interfaces down)
+- SCION bwtester not achieving high bandwidth -> ok to test if attack impact
+  
+
+
+18:23: 5 Gbps
+18:33: 6 Gbps
+18:43: 7 Gbps
+18:48: 8 Gbps
+18:53: 9 Gbps
+18:58: 10 Gbps
+18:03: 11 Gbps
+19:08: 12 Gbps
+19:13: 13 Gbps
+19:18: 14 Gbps
+19:23: 15 Gbps
