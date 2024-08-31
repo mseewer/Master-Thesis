@@ -43,19 +43,19 @@ Specifically, in newer management system versions, it is possible to remove exis
 This lack of authentication can lead to a full device compromise.
 To recover from such an attack the device has to be reset and reconfigured entirely, which can lead to a significant downtime.
 
-As our volumetric experiments showed, it is important to protect the SCION network from volumetric denial-of-service attacks to ensure its availability.
-By physically separating the SCION and traditional Internet connections, a non-SCION adversary can not disrupt the SCION performance with a volumetric attack.
+As demonstrated by our volumetric experiments showed, protecting the SCION network from volumetric denial-of-service attacks is crucial to maintaining its availability.
+Physical separation of SCION and traditional Internet connections ensures that non-SCION adversaries cannot disrupt SCION performance through volumetric attacks.
 
-However, the network is not immune to all volumetric attacks.
-We demonstrated that a SCION adversary can still disrupt the network by sending a large number of SCION packets.
-This attack can be extended with spoofed source addresses including fake path headers, which hides the true origin of the attack.
-One mitigation would be to use an extension of SCION called COLIBRI \cite[Section 10.2]{Perrig2022}, which provides bandwidth reservation for SCION paths.
-However, this extension again requires the DRKey system to authenticate the source.
-Another solution that is already possible today is to use hidden paths.
-These paths are not publicly known and are only shared with trusted parties.
-In our case, the hidden paths would only be shared with the CYD Campus network.
-Without the knowledge of these paths, an attacker would not be able to send SCION packets over them.
-It is important that the hidden and announced path are again physically separated as they share the same underling physical infrastructure.
+However, the network remains vulnerable to attacks originating from within SCION
+Our experiments showed that a malicious SCION adversary can still degrade network performance by sending a large volume of SCION packets.
+This type of attack can be further intensified by using spoofed source addresses and fake path headers, making the true origin of the attack difficult to trace.
+
+One potential mitigation strategy is the adoption of COLIBRI \cite[Section 10.2]{Perrig2022}, an extension of SCION that enables bandwidth reservation for SCION paths.
+However, this approach again relies on the DRKey system to authenticate the source.
+An alternative solution that can be used already today is to use hidden paths.
+These paths are not publicly advertised and are shared only with trusted parties, such as the CYD Campus network in our case.
+Without knowledge of these hidden paths, an attacker would be unable to send SCION packets through them.
+It is essential to ensure that the hidden and announced path are physically separated as they share the same underling physical infrastructure.
 
 \section{Limitations}
 The analysis of the Anapaya devices was limited to those deployed at CYD Campus.
@@ -84,9 +84,9 @@ Regular security assessments and automated vulnerability scans should be conduct
 It is crucial to address the findings of these assessments by deploying corresponding security updates promptly.
 A timely update process is essential to mitigate the risk of successful attacks.
 
-Finally, for a secure SCION deployment, ensure that the SCION and traditional Internet connection are physically separated.
-This separation helps prevent certain attacks, such as volumetric denial-of-service, from impacting the SCION network and its users.
-Moreover, hidden paths should be used to protect the network from volumetric attacks originating from within the SCION network.
-These paths should only be shared with trusted parties to prevent unauthorized access.
-Physical separation of hidden and public SCION paths is crucial to ensure a secure SCION deployment.
+Finally, for a secure SCION deployment, it is essential to ensure that the SCION and traditional Internet connection are physically separated.
+This separation minimizes the risk of certain attacks, such as volumetric denial-of-service, from affecting the SCION network and its users.
+Additionally, hidden paths should be used to protect the network from volumetric attacks originating from within the SCION network.
+These paths should be exclusively shared with trusted parties to prevent unauthorized access and exploitation.
+Physical separation of hidden and public SCION paths is a critical measure for maintaining the overall security and resilience of the SCION deployment.
 

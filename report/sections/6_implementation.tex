@@ -100,29 +100,27 @@ This allows for simpler coordination of specific attacks, such as volumetric den
 
 \section{Volumetric Attacks}
 \label{sec:impl:VolumetricDoS}
-% As mentioned in the previous section, we used the external attacker to simulate a volumetric denial-of-service attack.
-% In this section we describe the implementation of this attack.
-
-We utilize TRex, to generate a high volume of traffic required for performing volumetric denial-of-service attacks.
-At ETH Zürich a server was set up with MT27800 Mellanox 100 Gbit/s network interface card and was running TRex version 2.87.
-This setup provides the necessary infrastructure to generate a high throughput of traffic.
-We simulated two types of volumetric attacks: one from a non-SCION adversary and another from a malicious SCION end host.
+This section details the implementation of volumetric denial-of-service attacks to evaluate the resilience of SCION under high traffic loads.
+We employ TRex, a state-of-the-art traffic generator, to produce the high volume of traffic required for these attacks.
+The setup, located at ETH Zürich, consists of a server equipped with an MT27800 Mellanox 100 Gbit/s network interface card, running TRex version 2.87.
+This allowed us to conduct the following two types of volumetric attacks:
+We conducted two types of volumetric attacks:
+One from a traditional (non-SCION) Internet adversary and another from a malicious SCION end host.
 
 \begin{itemize}
     \item \textbf{Traditional Internet:}
-    To simulate a volumetric attack from the non-SCION adversary, we instructed TRex to repeatably send many big UDP packets towards the public IP of the CYD Campus location in Zürich.
-    \item \textbf{SCION:} TRex does not natively support generating SCION packets.
-    To overcome this limitation, we wrote a script that creates a valid SCION packet including the path information to the border router at CYD Campus Zürich.
-    This script stores the packet in a PCAP file, which then can be replayed by TRex.
-    As before, the packet contains a large payload to maximize the use of network resources.
+    To simulate a volumetric attack originating from the non-SCION adversary, we configured TRex to continuously send large UDP packets towards the public IP of the CYD Campus location in Zürich.
+    \item \textbf{SCION:} Since TRex does not natively support generating SCION packets, we developed a custom script that creates a valid SCION packet, including the required path information to the border router at CYD Campus Zürich.
+    This script stores the packet in a PCAP file, which can then be replayed by TRex.
+    Similar to the first attack, the SCION packet contains a large payload to maximize network resource consumption.
 \end{itemize}
 
-We got the allowance to generate up to 20 Gbit/s of traffic from the ETH network to the CYD Campus.
-But this limit is enough given that the link at the CYD Campus in Zürich has only a capacity of 10 Gbit/s.
+We were permitted to generate up to 20 Gbit/s of traffic from the ETH network, which exceeds the 10 Gbit/s capacity of the CYD Campus link in Zürich, ensuring that the attack traffic fully utilizes the available bandwidth.
 
-To assess the impact of the attack on SCION's functionality, we employed two SCION-specific tools.
-First, we utilize \texttt{scion ping} to verify the continued reachability of the SCION AS under attack.
-Second, to evaluate the remaining available bandwidth, we use the \texttt{scion-bwtester} tool.
+To evaluate the impact of the attack on SCION's performance, we employed two SCION-specific tools.
+First, we utilize \texttt{scion ping} to assess the reachability of the targeted SCION AS during the attack.
+Second, to measure the remaining available bandwidth, we use the \texttt{scion-bwtester} tool.
+This provides insights into the degree of resource exhaustion caused by the attack.
 
 We chose Thun as the measurement point due to its superior network infrastructure compared to Lausanne, offering a significantly higher bandwidth capacity (10 Gbit/s vs. 1 Gbit/s).
-This choice ensures that any observed degradation in performance could be more directly attributed to the DoS attack rather than limitations in the network infrastructure.
+This selection ensures that any observed performance degradation could be more directly attributed to the DoS attack rather than limitations in the network infrastructure.

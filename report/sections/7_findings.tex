@@ -753,20 +753,23 @@ There has been no confirmation on whether Anapaya has made improvements to ensur
 \section{Volumetric Attacks}
 \label{sec:volumetric-attacks}
 
-In this section we will discuss the results of the volumetric attacks conducted against the CYD Campus network.
-The two plots shown in this section have the same structure and axis scaling.
-The x-axis represents the amount of traffic in Gigabits per second sent to the CYD Campus in Zürich.
-It is either Internet traffic or SCION traffic, depending on the attack.
+This section presents the results of the volumetric attacks conducted against the CYD Campus network in Zürich.
+The two plots provided share the same structure and axis scaling for easy comparison.
+
+The x-axis in each plot represents the volume of traffic, measured in Gigabits per second, sent to the CYD Campus.
+Depending on the scenario, this traffic is either traditional Internet traffic or SCION traffic.
 
 Each plot has a total of three y-axes:
-The blue y-axis and bars show the average SCION ping time including indicators for the standard deviation.
-The red y-axis and line plot indicate the experienced loss rate during the SCION pings.
-Finally, the green y-axis and its corresponding dotted line represent the achieved SCION throughput.
+\begin{itemize}
+    \item The blue y-axis corresponds to the average SCION ping time, visualized with bars, including standard deviation indicators.
+    \item The red y-axis is linked to  the experienced loss rate during the SCION pings and is displayed as a solid line.
+    \item The green y-axis corresponds to the achieved SCION throughput, shown as a dashed line.
+\end{itemize}
 
 \subsection{Internet Traffic}
 
-The impact of the traditional Internet on SCION is plotted in \cref{fig:internet_traffic}.
-Here x-axis represents the amount of Internet traffic in Gigabits per second sent to the public IP address of the CYD Campus in Zürich.
+The impact of the traditional Internet on SCION is illustrated in \cref{fig:internet_traffic}.
+Here the x-axis represents the volume of Internet traffic, measured in Gigabits per second, directed to the public IP address of the CYD Campus in Zürich.
 
 \begin{figure}[H]
     \centering
@@ -775,16 +778,16 @@ Here x-axis represents the amount of Internet traffic in Gigabits per second sen
     \label{fig:internet_traffic}
 \end{figure}
 
-The results show that the Internet traffic has no impact on SCION's performance between the CYD Campus locations.
-The ping times remain stable at around seven milliseconds round-trip time.
-Not a single ping packet was lost during the whole experiment.
-The achieved SCION bandwidth also remains constant at around 600 Mbit/s, regardless of the amount of Internet traffic sent.
-We can therefore conclude that the Internet and SCION links at the CYD Campus in Zürich are physically separated and do not interfere with each other.
+The results demonstrate that Internet traffic has no observable impact on SCION's performance between the CYD Campus locations.
+The ping times consistently remain around seven milliseconds round-trip time, with no packet loss recorded throughout the entire experiment.
+Furthermore, the achieved SCION bandwidth also remains steady at approximately 600 Mbit/s, regardless of the amount of Internet traffic sent.
+
+These findings indicate that the Internet and SCION links at the CYD Campus in Zürich are physically separated, with no interference between them.
 
 
 \subsection{SCION Traffic}
 
-The following plot in \cref{fig:scion_traffic} shows the impact of volumetric SCION traffic.
+\cref{fig:scion_traffic} shows the impact of volumetric SCION traffic on the CYD Campus network.
 The x-axis now represents the amount of SCION traffic in Gigabits per second sent towards the border router of the CYD Campus in Zürich.
 
 \begin{figure}[H]
@@ -794,15 +797,13 @@ The x-axis now represents the amount of SCION traffic in Gigabits per second sen
     \label{fig:scion_traffic}
 \end{figure}
 
-The picture for speeds up to 10 Gbit per second is similar to the Internet traffic.
-We again have a stable ping time of around seven milliseconds and no packet loss.
-The achieved SCION bandwidth is also stable at around 600 Mbit/s.
+At traffic rates up to 10 Gbit/s, the observed performance remains similar to that of Internet traffic.
+The SCION ping time remains stable at around seven milliseconds with no packet loss, and the achieved SCION bandwidth remains steady at approximately 600 Mbit/s.
 
-Recall that the SCION uplink has a capacity of 10 Gbit/s.
-When sending 10 Gbit/s or more SCION traffic, we observe a significant degradation in performance.
-The ping times increase up to around 17 milliseconds, and its loss rate spikes up to 80\%.
-The achieved SCION bandwidth also degrades drastically and sometimes even drops to zero.
-In these situations the SCION bandwidth tester was not able to establish a connection to the other side.
-This behavior is expected, as the SCION uplink is saturated and the SCION traffic is dropped by the router.
-During our experiments, the router did not crash because of that high traffic load.
+Given that the SCION uplink has a maximum capacity of 10 Gbit/s, sending traffic at 10 Gbit/s or higher results in a significant decline in performance.
+Ping times increase to approximately 17 milliseconds, and the packet loss rate escalates dramatically, reaching up to 80\%.
+The SCION throughput also suffers severe degradation, occasionally dropping to zero, indicating that the SCION bandwidth tester was unable to establish a connection.
+
+These performance issues align with expectations, as the uplink becomes saturated and excess traffic is dropped by the router.
+Notably, despite the heavy traffic load, the router remained operational and did not crash during the experiments.
 
