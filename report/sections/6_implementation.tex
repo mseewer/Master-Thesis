@@ -21,7 +21,7 @@ The \texttt{scion} binary is a tool that facilitates interaction with the SCION 
 It can be used to send SCMP echo requests (i.e, SCION pings) or perform traceroutes to a specific destination.
 The binaries require configuration files to connect to the SCION network.
 For example, the addresses and interfaces of the AS-local border routers must be known, or the TRC of the whole ISD is required.
-We extracted the necessary configuration files from the Anapaya SCION devices, copied them to the Kali machines, and attempted to run the SCION end host stack.
+We extracted the necessary configuration files from the Anapaya EDGE devices, copied them to the Kali machines, and attempted to run the SCION end host stack.
 This attempt was unsuccessful because Anapaya uses a different format for the configuration files than the open-source SCION implementation.
 After some manual adjustments, we managed to get the dispatcher and daemon running and connected to the SCION production network.
 
@@ -31,18 +31,18 @@ Additionally, this setup allowed us to fetch all possible path information to a 
 
 \section{Open-Source SCION}
 We utilize the open-source code not only to build the end host stack, but also to verify the behavior of the Anapaya's proprietary SCION implementation.
-By leveraging the open-source code, we can validate certain hypotheses and determine if specific features are implemented identically or modified by Anapaya.
+By leveraging the open-source code, we can validate certain hypotheses and determine if specific features are implemented identically or were modified by Anapaya.
 
 
 \section{SCION Packets}
 \label{sec:impl:SCIONpackets}
 Typically, SCION packets are not directly accessible to the user as they are generated and sent by a SCION application, such as the \texttt{scion} binary.
-However, for our experiments, we needed to generate and modify custom SCION packets.
+However, for our experiments, we needed to generate and modify custom packets.
 The Python library \texttt{scapy}, with its SCION extension, facilitates this process.
 It allows stacking different headers on top of each other and defining every field of them.
 This capability enabled us to generate SCION packets with custom payloads and headers.
 To send and receive SCION packets, \texttt{scapy} does not require a running SCION dispatcher or daemon.
-Nonetheless, in our implementation, we use the SCION end host stack to fetch the path information, which we then use to generate SCION packets with valid path headers.
+Nonetheless, in our implementation, we use the SCION end host stack to fetch the path information, which we then use to generate custom SCION packets with valid path headers.
 
 
 
@@ -59,19 +59,19 @@ These machines are integrated into the SCION network and are capable of sending 
 This enables us to generate and dispatch custom, potential maliciously crafted, SCION packets and to other SCION devices, using the approach mentioned previously in \cref{sec:impl:SCIONpackets}.
 Since the Kali machines can also receive and analyze SCION packets, we can verify whether the packets are correctly received and processed by the target devices.
 This process allows us to assess whether the target devices are vulnerable to the specific attack.
-Additionally, we also have access to our target devices, including all three operational Anapaya SCION devices, to evaluate the impact of potential attacks.
+Additionally, we also have access to our target devices, including all three operational Anapaya EDGE devices, to evaluate the impact of potential attacks.
 
 Moreover, the Kali machines are used to fetch and store path information for future use.
 This is necessary because path information is frequently updated and removed, despite the paths remaining valid and not yet expired.
 By preserving these path information, we can later send SCION packets with valid path headers (i.e., with correct MAC values) but with potentially expired hop fields.
 
-
+\newpage
 \subsection{On-path Attacker}
-A logical approach to implementing an on-path attacker would involve utilizing the three operational Anapaya SCION devices at the CYD Campus locations.
+A logical approach to implementing an on-path attacker would involve utilizing the three operational SCION devices at the CYD Campus locations.
 These devices are present on each path between our SCION end hosts (i.e., Kali machines) and any other reachable SCION device within the network.
 This would enable us to intercept, monitor, block, replay, and modify packets in transit.
 However, employing these devices would affect other SCION users and their connections.
-Due to ethical and legal concerns, we opted against using the Anapaya devices for our experiments.
+Due to ethical and legal concerns, we opted against using these devices for our experiments.
 Moreover, even in the absence of these concerns, implementing an on-path attacker on these devices would be challenging, particularly due to the need for custom software installation.
 
 Instead, again the Kali machines are used to simulate an on-path attacker.
@@ -79,6 +79,7 @@ We configure a socket through which an end host can send and receive SCION packe
 On the same machine, a custom Python script operates on the other side of the socket to simulate the on-path attacker.
 In the absence of an attack, this script simply forwards received SCION packets to the border router and sends the corresponding response back to the end host via the socket.
 During an attack, the script has the capability to modify, save, or drop both incoming and outgoing SCION packets.
+
 
 
 \subsection{Off-path Attacker}
@@ -97,13 +98,12 @@ ETH Zürich provided access to their network as well as a dedicated server from 
 An advantage of this setup is that both ETH Zürich and the CYD Campus in Zürich share the same Internet service provider, SWITCH.
 This allows for simpler coordination of specific attacks, such as volumetric denial-of-service attacks.
 
-
+\newpage
 \section{Volumetric Attacks}
 \label{sec:impl:VolumetricDoS}
 This section details the implementation of volumetric denial-of-service attacks to evaluate the resilience of SCION under high traffic loads.
 We employ TRex, a state-of-the-art traffic generator, to produce the high volume of traffic required for these attacks.
 The setup, located at ETH Zürich, consists of a server equipped with an MT27800 Mellanox 100 Gbit/s network interface card, running TRex version 2.87.
-This allowed us to conduct the following two types of volumetric attacks:
 We conducted two types of volumetric attacks:
 One from a traditional (non-SCION) Internet adversary and another from a malicious SCION end host.
 

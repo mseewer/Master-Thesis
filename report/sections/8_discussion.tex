@@ -43,16 +43,16 @@ Specifically, in newer management system versions, it is possible to remove exis
 This lack of authentication can lead to a full device compromise.
 To recover from such an attack the device has to be reset and reconfigured entirely, which can lead to a significant downtime.
 
-As demonstrated by our volumetric experiments showed, protecting the SCION network from volumetric denial-of-service attacks is crucial to maintaining its availability.
-Physical separation of SCION and traditional Internet connections ensures that non-SCION adversaries cannot disrupt SCION performance through volumetric attacks.
+As demonstrated by our volumetric experiments, protecting the SCION network from volumetric denial-of-service attacks is crucial to maintaining its availability.
+Physical separation of SCION and traditional Internet connections ensures that non-SCION adversaries can not disrupt SCION performance through volumetric attacks.
 
-However, the network remains vulnerable to attacks originating from within SCION
-Our experiments showed that a malicious SCION adversary can still degrade network performance by sending a large volume of SCION packets.
+However, the network remains vulnerable to attacks originating within SCION itself.
+Our experiments revealed that a malicious SCION adversary could significantly degrade network performance by sending a high volume of SCION packets.
 This type of attack can be further intensified by using spoofed source addresses and fake path headers, making the true origin of the attack difficult to trace.
 
 One potential mitigation strategy is the adoption of COLIBRI \cite[Section 10.2]{Perrig2022}, an extension of SCION that enables bandwidth reservation for SCION paths.
 However, this approach again relies on the DRKey system to authenticate the source.
-An alternative solution that can be used already today is to use hidden paths.
+An alternative solution available already today is to use hidden paths.
 These paths are not publicly advertised and are shared only with trusted parties, such as the CYD Campus network in our case.
 Without knowledge of these hidden paths, an attacker would be unable to send SCION packets through them.
 It is essential to ensure that the hidden and announced path are physically separated as they share the same underling physical infrastructure.
@@ -78,7 +78,7 @@ We further recommend implementing regular key updates to ensure good security hy
 Such regular key updates can mitigate the impact of a leaked or compromised key.
 Additionally, SCION implementations (both open-source and Anapaya's) should incorporate some sort of outbound filtering to reduce the risk of successful spoofing attacks.
 
-Regarding Anapaya Edge devices, we recommend adhering to best security practices, such as the CIS benchmarks.
+Regarding Anapaya EDGE devices, we recommend adhering to best security practices, such as the CIS benchmarks.
 These benchmarks cover various security aspects, such as hardware security, kernel hardening, privilege settings, firewall rules, and more.
 Regular security assessments and automated vulnerability scans should be conducted to ensure device security.
 It is crucial to address the findings of these assessments by deploying corresponding security updates promptly.

@@ -17,12 +17,13 @@ Even if the implementation of SCION were flawless and contained no bugs, its sec
 Insecure devices could be compromised, undermining the integrity of SCION itself.
 Potential attacks include disruption of SCION communication, packet manipulation, and data exfiltration.
 Moreover, attackers could silently update the SCION software to a malicious version containing backdoors or other vulnerabilities, enabling undetected compromises of the entire network.
-
 Given that Anapaya sells devices running their version of SCION, ensuring the security of these devices is crucial.
 This is especially important since these devices are deployed in production environments, making them attractive targets for attackers.
 Proper security measures must be in place to protect these high-value targets from potential threats.
 
-
+Even with a flawless SCION implementation and robustly secured devices, the network remains susceptible to fundamental and pervasive threats such as volumetric attacks.
+Volumetric attacks overwhelm network resources by flooding the target with a high volume of traffic, rendering legitimate communication impossible.
+These attacks exploit the underlying infrastructure rather than specific software vulnerabilities, highlighting that even the most secure protocol and devices are not immune to such brute-force tactics.
 
 \section{Attacker Models}
 \label{sec:attacker-models}
@@ -70,12 +71,13 @@ This thesis aims to improve the security of Anapaya's SCION product by addressin
 
         \item \textbf{SCION network in use:}
         We evaluate the SCION implementation in Anapaya's products to uncover any weaknesses or vulnerabilities that could be exploited by attackers.
-        Using the attacker models presented in \cref{sec:fundamental-problem}, we assess the impact of potential attacks on the SCION network.
+        Using the attacker models presented in \cref{sec:attacker-models}, we assess the impact of potential attacks on the SCION network.
         The goal is to provide insights into the security of the SCION protocol and its implementation in real-world scenarios.
 
-        \item \textbf{Impact of Traditional Internet on SCION:}
-        The last objective of this thesis is to investigate the interaction between the SCION network and the traditional Internet, focusing on the potential security implications.
-        We analyze how attacks originating from the traditional Internet could affect the SCION network and determine strategies to protect SCION against such threats.
+        \item \textbf{Impact of Volumetric Attacks on SCION:}
+        Our last objective aims to investigate the impact of volumetric attacks on the SCION network, specifically assessing how such attacks affect SCION's performance and availability.
+        The analysis will include attacks originating both from the traditional Internet and within the SCION network itself, examining their potential to disrupt SCION's operations.
+        Furthermore, the objective includes identifying and evaluating mitigation strategies to enhance SCION's resilience against these volumetric threats, ensuring robust protection of the network's critical infrastructure.
 \end{itemize}
 
 

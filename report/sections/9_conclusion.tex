@@ -19,17 +19,17 @@ To address this question, the thesis conducted a comprehensive analysis across t
 First, an in-depth examination of the deployed Anapaya EDGE devices was performed, revealing several weaknesses.
 The study uncovered insecure default configurations, such as inadequate SSH settings and the presence of unused and vulnerable software packages.
 More alarmingly, the SCION management system lacked authentication, posing a significant risk of unauthorized access and control over the network infrastructure.
-Even when authentication was enabled, the management system remained susceptible to attacks capable of crashing the device within seconds and thereby also taking down all SCION services.
+Even with enabled authentication, the management system remained susceptible to attacks capable of crashing the device within seconds and thereby also taking down all SCION services.
 
 
-The second key area focused on examining the SCION protocol implementation to assess the security of the deployed version and also to identify potential derivations from the open-source version.
+The second key area focused on examining the SCION protocol implementation to assess the security of the deployed version and also to identify potential deviations from the open-source version.
 The analysis revealed significant flaws, with Anapaya's implementation, including the absence of source authentication within the SCION protocol and the use of persistent master secrets.
 These vulnerabilities enable attackers to forge packets, leading to various attack vectors that undermine the integrity and trustworthiness of the network.
-
+Additionally, we observed that SCION packets with nearly expired path information were rejected, highlighting a clear divergence from the SCION protocol specification.
 
 The third and final area of investigation evaluated the impact of volumetric denial-of-service attacks on the SCION infrastructure.
-Our experiments demonstrated the importance of physically separating SCION and the traditional Internet to protect against non-SCION adversaries.
-Moreover, physical path separation and hidden paths are key to mitigating the impact of volumetric attacks originating from within the SCION network.
+Our experiments demonstrated the importance of physically separating SCION from the traditional Internet to protect against non-SCION adversaries.
+Moreover, physical path separation and hidden paths are key to mitigating the impact of volumetric attacks originating within the SCION network.
 Otherwise, the network remains vulnerable to such attacks, which can disrupt the availability of SCION services and impact its users.
 
 \\
