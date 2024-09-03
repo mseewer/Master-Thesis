@@ -8,9 +8,10 @@ from typing import List, Optional, Tuple, Union
 import signal
 import json
 import subprocess
+from scapy_scion.layers.sig import SIGHeader
 from scapy_scion.layers.scmp import SCMP, EchoRequest
 from scapy_scion.layers.scion import SCION, UDP, SCIONPath, HopField, InfoField
-from scapy.all import bind_layers, sniff, sr1, conf, L3RawSocket, IP, Ether, sr, srp, srp1,  SimpleSocket, send
+from scapy.all import bind_layers, sniff, sr1, conf, L3RawSocket, IP, ICMP, Ether, sr, srp, srp1,  SimpleSocket, send, fragment
 import pathlib
 import pprint
 # import scapy
@@ -18,7 +19,8 @@ import pprint
 
 br_port = 30042
 br_addr = "192.168.111.1"
-br_iface = "eth1"  # interface to borderrouter
+br_iface = "eth1"  # interface to borderrouter at CYD
+# br_iface = "eth0"  # interface to borderrouter at ETH
 
 class Location(Enum):
     Zurich = "2:0:2b"
@@ -31,7 +33,7 @@ class BR_addresses(Enum):
     Lausanne = "192.168.112.1"
 
 class Kali_addresses(Enum):
-    Zurich = "192.168.111.25"
+    Zurich = "192.168.111.30"
     Thun = "192.168.110.78"
     Lausanne = "192.168.112.15"
 
@@ -135,7 +137,7 @@ def test():
     del p[SCION].HdrLen
     del p[SCION].PayloadLen
     
-
+    
     print("--------------------")
 
     req = p/SCMP(Message=EchoRequest(Identifier=0xabcd, Data=b"Hello!"))
@@ -212,9 +214,9 @@ def base():
 
     paths = fetch_paths(dst_IA)
 
-    sequence1 = "64-2:0:2b#0,1 64-559#24,21 64-15623#8,16 64-6730#27,8 64-3303#10,21 64-2:0:2c#1,0"
+    # sequence1 = "64-2:0:2b#0,1 64-559#24,21 64-15623#8,16 64-6730#27,8 64-3303#10,21 64-2:0:2c#1,0"
 
-    SCION_path1 = choose_path(dst_IA, paths, sequence=sequence1)
+    SCION_path1 = choose_path(dst_IA, paths, sequence=None)
 
     dstAddr = "192.168.110.1"
     bind_layers(UDP, SCION, dport=br_port)
@@ -248,7 +250,7 @@ def base():
     del p[SCION].PayloadLen
     p.show2()
     # p.pdfdump("output/sent_packet.pdf")
-    
+    input('ok')
     resp = sr1(p, iface=br_iface, timeout=1)
     resp.show()
     # resp.pdfdump("output/received_packet.pdf")
@@ -681,6 +683,105 @@ def spoof(src_loc: Location, dst_loc: Location):
 
 
 
+def gateway():
+    """
+    Sends a packet to the gateway (border router) with the path to the gateway.
+    The gateway will forward the packet to the destination.
+    """
+    # change when running from remote
+    local_br_addr = "192.168.110.1"
+    # local_br_addr = "192.168.53.20"
+    local_sig_addr = "192.168.53.19"
+    local_AS = "2:0:2c"
+    # local_AS = "2:0:9"
+    local_client_addr = "192.168.110.78"
+    # local_client_addr = "129.132.175.105"
+    
+    dstISD = 64
+    dstAS = "2:0:2b"
+    # dstAS = "2:0:9"
+    dst_IA = f"{dstISD}-{dstAS}"
+    dstAddr = BR_addresses["Zurich"].value
+    dstAddr = "192.168.111.1"
+    # dstAddr = "192.168.53.20"
+
+    paths = fetch_paths(dst_IA)
+
+    SCION_path = choose_path(dst_IA, paths, br_addr=local_br_addr) 
+
+    bind_layers(UDP, SCION, dport=br_port)
+    bind_layers(UDP, SCION, sport=br_port)
+    myIP = IP()
+    myIP.src = local_client_addr
+    myIP.dst = local_br_addr # address of border router (NOT! actual destination address)
+
+    myUDP = UDP()
+    myUDP.sport = 30041
+    myUDP.dport = br_port
+
+    mySCION = SCION_path
+    mySCION.SrcISD = 64
+    mySCION.SrcAS = local_AS
+    mySCION.PathType = 1
+    mySCION.DstHostAddr = dstAddr
+    mySCION.SrcHostAddr = "192.168.110.1" #local_br_addr #local_client_addr
+    mySCION.NextHdr = 17 # UDP
+
+
+    myUDP2 = UDP()
+    myUDP2.sport = 30056
+    myUDP2.dport = 30056
+
+    mySIG_Header = SIGHeader()
+    mySIG_Header.Session = 1
+    mySIG_Header.Index = 0
+    mySIG_Header.Stream = 902825 # random
+    mySIG_Header.SeqNumber = 3184 # starts with 0 and increases monotonically
+
+    myPayload = IP()
+    # myPayload.src = local_client_addr
+    myPayload.dst = dstAddr
+    myPayload = myPayload/ICMP()/b"AAAAAAAAAAAAAAAAAAAAAAAA"
+
+    p = myIP/myUDP/mySCION/myUDP2/mySIG_Header/myPayload
+
+    del p[IP].len
+    del p[IP].chksum
+    del p[UDP].len
+    del p[UDP].chksum
+    # del p[SCION].NextHdr
+    del p[SCION].HdrLen
+    del p[SCION].PayloadLen
+    p.show2()
+
+    input("good?")
+    time.sleep(10)
+    for i in range(10):
+        resp = sr1(p, iface=br_iface, timeout=1)
+        time.sleep(1)
+    resp.show()
+    # resp = send(p, iface=br_iface, count=100)
+
+
+
+def ping():
+    dstAddr = "192.168.111.1"
+    myPayload = IP()
+    # myPayload.src = local_client_addr
+    myPayload.dst = dstAddr
+    p = myPayload/ICMP()/b"AAAAAAAAAAAAAAAAAAAAAAAA"
+    del p[IP].len
+    del p[IP].chksum
+
+    p.show2()
+
+    input("good?")
+    time.sleep(2)
+    for i in range(10):
+        resp = sr1(p, iface=br_iface, timeout=1)
+        time.sleep(1)
+    resp.show()
+
 if __name__ == "__main__":
     args = sys.argv
     operation = args[1]
@@ -714,3 +815,7 @@ if __name__ == "__main__":
         from_loc = Location[from_location]
         to_loc = Location[to_location]
         spoof(from_loc, to_loc)
+    elif operation == "gateway":
+        gateway()
+    elif operation == "ping":
+        ping()

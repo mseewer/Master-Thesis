@@ -13,8 +13,11 @@ elif [[ $loc == "Thun" ]]; then
 elif [[ $loc == "Lausanne" ]]; then
     SSH_target=kaliLAU
     USER=kali
+elif [[ $loc == "ETH" ]]; then
+    SSH_target=kaliETH
+    USER=user
 else
-    echo "Invalid location. Please provide one of Zurich, Thun, or Lausanne."
+    echo "Invalid location. Please provide one of Zurich, Thun, Lausanne, or ETH"
     exit 1
 fi
 

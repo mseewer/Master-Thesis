@@ -40,7 +40,6 @@ def main():
                 else:
                     if packet[SCMP].Type != 129:
                         print("Not an echo reply")
-
                     processing_time = float(packet.time - req_packet.time)
                     size = len(packet)
                     if size > 500: # 897 vs 225 bytes
@@ -49,9 +48,10 @@ def main():
                         small_pkt_times.append(processing_time)
                     # size:
                     req_packet = None
-
-    big_pkt_times = np.array(big_pkt_times)
-    small_pkt_times = np.array(small_pkt_times)
+    print("len big_pkt_times", len(big_pkt_times))
+    print("len small_pkt_times", len(small_pkt_times))
+    big_pkt_times = np.array(big_pkt_times) * 1000
+    small_pkt_times = np.array(small_pkt_times) * 1000
     big_mean = np.mean(big_pkt_times)
     small_mean = np.mean(small_pkt_times)
     big_std = np.std(big_pkt_times)
@@ -61,7 +61,12 @@ def main():
     
     # plot mean and std
     import matplotlib.pyplot as plt
-    plt.bar(["Big", "Small"], [big_mean, small_mean], yerr=[big_std, small_std])
+    plt.figure(figsize=(5, 4))
+    plt.grid(axis="y")
+    plt.bar(["Normal", "Max"], [small_mean, big_mean], yerr=[small_std, big_std], capsize=5, alpha=0.5)
+    plt.ylabel("Processing time [ms]")
+    # plt.title("Processing times of different path lengths")
+    plt.tight_layout()
     plt.savefig("latency.png")
 
 
