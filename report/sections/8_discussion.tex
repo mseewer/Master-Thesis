@@ -18,7 +18,7 @@ It also discusses the limitations of our work and provides recommendations for A
 
 
 \section{Interpretations and Implications}
-The use of a secure MAC algorithm for calculating the $HFAuth$ field in hop fields is crucial as it ensures path integrity and block any path manipulation attacks.
+The use of a secure MAC algorithm for calculating the $HFAuth$ field in hop fields is crucial as it ensures path integrity and blocks any path manipulation attacks.
 Fortunately, Anapaya employs the same algorithm as the open-source version, facilitating easy verification and reasoning about the security of the system.
 
 However, the absence of DRKey in Anapaya's implementation exposes the system to various attacks, as discussed in \cref{ch:findings}.
@@ -66,7 +66,7 @@ Furthermore, our analysis only covered Anapaya EDGE devices and no CORE or GATE 
 Due to the time limitations of this thesis, we could not fully analyze the proprietary components of the Anapaya SCION implementation.
 Initial reverse engineer efforts did not reveal any critical vulnerabilities.
 However, a more comprehensive analysis is necessary to fully understand the security implications of these proprietary changes.
-
+\newpage
 Nevertheless, since all Anapaya customers run the same software, particularly the same SCION implementation, our SCION protocol analysis remains relevant for all Anapaya customers.
 
 
@@ -78,7 +78,7 @@ We further recommend implementing regular key updates to ensure good security hy
 Such regular key updates can mitigate the impact of a leaked or compromised key.
 Additionally, SCION implementations (both open-source and Anapaya's) should incorporate some sort of outbound filtering to reduce the risk of successful spoofing attacks.
 
-Regarding Anapaya EDGE devices, we recommend adhering to best security practices, such as the CIS benchmarks.
+Regarding Anapaya EDGE devices, we recommend adhering to the best security practices, such as the CIS benchmarks.
 These benchmarks cover various security aspects, such as hardware security, kernel hardening, privilege settings, firewall rules, and more.
 Regular security assessments and automated vulnerability scans should be conducted to ensure device security.
 It is crucial to address the findings of these assessments by deploying corresponding security updates promptly.

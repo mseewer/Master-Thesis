@@ -18,7 +18,7 @@ As this version incorporates proprietary modifications that are not fully public
 The exploratory phase involves conducting preliminary investigations to identify potential vulnerabilities, security features, and other relevant aspects of the implementation.
 This includes a review of available documentation, security scans, and configuration checks to gather initial data on the system.
 
-These early finding from exploratory efforts will guide the subsequent analytical phase of the research, providing a foundation for more in-depth analysis and testing.
+These early findings from exploratory efforts will guide the subsequent analytical phase of the research, providing a foundation for more in-depth analysis and testing.
 
 \subsection{Analytical Approach}
 The analytical approach is employed to systematically evaluate and interpret the security characteristics identified during the exploratory phase.
@@ -34,9 +34,9 @@ A simplified network setup is shown in \cref{fig:network-setup}.
 Each CYD Campus location forms its own AS and includes an Anapaya EDGE device.
 The three ASes are connected via three different Core ASes to the SCION production network.
 In each of these CYD Campus ASes, we deploy a Kali virtual machine (VM) that runs the SCION end host code, enabling interaction with the SCION network.
-At ETH Zürich, SCION access extends beyond the CYD Campus, where we operate an additional Kali VM.
-To assess the influences of the traditional Internet on SCION, we also have access to a non-SCION VM in the ETH Zürich network.
-According to the service offer from SWITCH the traditional Internet and SCION connection in Zürich are physically separated.
+At ETH Zurich, SCION access extends beyond the CYD Campus, where we operate an additional Kali VM.
+To assess the influences of the traditional Internet on SCION, we also have access to a non-SCION VM in the ETH Zurich network.
+According to the service offer from SWITCH the traditional Internet and SCION connection in Zurich are physically separated.
 At the other CYD Campus locations, no such separation information is provided.
 
 \begin{figure}[h]
@@ -84,7 +84,7 @@ It allows to easily define correctly formatted SCION packets and modify them as 
 \subsection{Volumetric Data Generation}
 We assess the robustness of SCION by conducting volumetric denial-of-service attacks.
 The primary objective of such an attack is to saturate the target's network bandwidth, overwhelming it with a large volume of data packets.
-For generating the volumetric data, we use the TRex traffic generator \cite{trexWebsite}, a versatile and high-performance tool capable of simulating both stateful and stateless traffic.
+For generating the volumetric data, we use the \textbf{TRex} traffic generator \cite{trexWebsite}, a versatile and high-performance tool capable of simulating both stateful and stateless traffic.
 TRex allows customizing traffic parameters, enabling us to closely mimic real-world attack scenarios.
 We configure TRex to send a continuous stream of large data packets, thereby maximizing the use of on network resources.
 This approach allows us to evaluate the resilience of the SCION architecture under severe traffic conditions, offering valuable insights into its performance and robustness.

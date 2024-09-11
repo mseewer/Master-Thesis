@@ -38,10 +38,10 @@ By leveraging the open-source code, we can validate certain hypotheses and deter
 \label{sec:impl:SCIONpackets}
 Typically, SCION packets are not directly accessible to the user as they are generated and sent by a SCION application, such as the \texttt{scion} binary.
 However, for our experiments, we needed to generate and modify custom packets.
-The Python library \texttt{scapy}, with its SCION extension, facilitates this process.
+The Python library scapy, with its SCION extension \cite{scapySCION}, facilitates this process.
 It allows stacking different headers on top of each other and defining every field of them.
 This capability enabled us to generate SCION packets with custom payloads and headers.
-To send and receive SCION packets, \texttt{scapy} does not require a running SCION dispatcher or daemon.
+To send and receive SCION packets, scapy does not require a running SCION dispatcher or daemon.
 Nonetheless, in our implementation, we use the SCION end host stack to fetch the path information, which we then use to generate custom SCION packets with valid path headers.
 
 
@@ -56,7 +56,7 @@ Their individual capabilities are described in \cref{sec:attacker-models}.
 \subsection{Malicious SCION End Host}
 We used the Kali machines to simulate a malicious SCION end host.
 These machines are integrated into the SCION network and are capable of sending and receiving SCION packets.
-This enables us to generate and dispatch custom, potential maliciously crafted, SCION packets and to other SCION devices, using the approach mentioned previously in \cref{sec:impl:SCIONpackets}.
+This enables us to generate and dispatch custom, potential maliciously crafted, SCION packets to other SCION devices, using the approach mentioned previously in \cref{sec:impl:SCIONpackets}.
 Since the Kali machines can also receive and analyze SCION packets, we can verify whether the packets are correctly received and processed by the target devices.
 This process allows us to assess whether the target devices are vulnerable to the specific attack.
 Additionally, we also have access to our target devices, including all three operational Anapaya EDGE devices, to evaluate the impact of potential attacks.
@@ -94,8 +94,8 @@ In certain scenarios, we also consider the Anapaya device within the attacker's 
 \subsection{Non-SCION Adversary}
 To simulate an attacker without SCION access, we could utilize any device that is not connected to the SCION network.
 For this purpose, we select a device connected to the traditional Internet and located outside the CYD Campus.
-ETH Zürich provided access to their network as well as a dedicated server from which we can launch attacks.
-An advantage of this setup is that both ETH Zürich and the CYD Campus in Zürich share the same Internet service provider, SWITCH.
+ETH Zurich provided access to their network as well as a dedicated server from which we can launch attacks.
+An advantage of this setup is that both ETH Zurich and the CYD Campus in Zurich share the same Internet service provider, SWITCH.
 This allows for simpler coordination of specific attacks, such as volumetric denial-of-service attacks.
 
 \newpage
@@ -103,21 +103,22 @@ This allows for simpler coordination of specific attacks, such as volumetric den
 \label{sec:impl:VolumetricDoS}
 This section details the implementation of volumetric denial-of-service attacks to evaluate the resilience of SCION under high traffic loads.
 We employ TRex, a state-of-the-art traffic generator, to produce the high volume of traffic required for these attacks.
-The setup, located at ETH Zürich, consists of a server equipped with an MT27800 Mellanox 100 Gbit/s network interface card, running TRex version 2.87.
+The setup, located at ETH Zurich, consists of a server equipped with an MT27800 Mellanox 100 Gbit/s network interface card, running TRex version 2.87.
 We conducted two types of volumetric attacks:
 One from a traditional (non-SCION) Internet adversary and another from a malicious SCION end host.
 
 \begin{itemize}
     \item \textbf{Traditional Internet:}
-    To simulate a volumetric attack originating from the non-SCION adversary, we configured TRex to continuously send large UDP packets towards the public IP of the CYD Campus location in Zürich.
-    \item \textbf{SCION:} Since TRex does not natively support generating SCION packets, we developed a custom script that creates a valid SCION packet, including the required path information to the border router at CYD Campus Zürich.
+    To simulate a volumetric attack originating from the non-SCION adversary, we configured TRex to continuously send large UDP packets towards the public IP of the CYD Campus location in Zurich.
+    \item \textbf{SCION:} Since TRex does not natively support generating SCION packets, we developed a custom script that creates a valid SCION packet, including the required path information to the border router at CYD Campus Zurich.
     This script stores the packet in a PCAP file, which can then be replayed by TRex.
     Similar to the first attack, the SCION packet contains a large payload to maximize network resource consumption.
+    The script is available in our GitHub repository \cite{gitHubMseewerMasterThesis} for reference and use.
 \end{itemize}
 
-We were permitted to generate up to 20 Gbit/s of traffic from the ETH network, which exceeds the 10 Gbit/s capacity of the CYD Campus link in Zürich, ensuring that the attack traffic fully utilizes the available bandwidth.
+We were permitted to generate up to 20 Gbit/s of traffic from the ETH network, which exceeds the 10 Gbit/s capacity of the CYD Campus link in Zurich, ensuring that the attack traffic fully utilizes the available bandwidth.
 
-To evaluate the impact of the attack on SCION's performance, we employed two SCION-specific tools.
+To evaluate the impact of the attack on SCION's performance at the CYD Campus in Zurich, we employed two SCION-specific tools from the measurement point in Thun.
 First, we utilize \texttt{scion ping} to assess the reachability of the targeted SCION AS during the attack.
 Second, to measure the remaining available bandwidth, we use the \texttt{scion-bwtester} tool.
 This provides insights into the degree of resource exhaustion caused by the attack.

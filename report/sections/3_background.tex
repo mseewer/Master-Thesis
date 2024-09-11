@@ -25,9 +25,9 @@ Unless otherwise stated, the background information presented here is primarily 
 The SCION architecture is designed around a global network of independently operated entities known as Autonomous Systems (ASes).
 An AS typically represents a network managed by a single organization, such as an Internet Service Provider (ISP).
 SCION organizes these ASes into groups called Isolation Domains (ISDs), which are illustrated in \cref{fig:scion_isd_architecture}.
-Within the SCION Internet architecture, every AS is uniquely identifiable by a ISD-AS number.
+Within the SCION Internet architecture, every AS is uniquely identifiable by an ISD-AS number.
 
-ISDs funciton as both administrative boundaries and security domains.
+ISDs function as both administrative boundaries and security domains.
 Within each ISD, a set of ASes is responsible for managing the ISD.
 These so-called core ASes establish the root of trust within the ISD and are responsible for managing connectivity between ISDs.
 
@@ -38,7 +38,7 @@ These so-called core ASes establish the root of trust within the ISD and are res
     \label{fig:scion_isd_architecture}
 \end{figure}
 
-
+\newpage
 \subsection{Core Concepts}
 In the following we explain SCION's core features and how it achieves them.
 \subsubsection{Isolation}
@@ -100,6 +100,7 @@ In the following, path exploration and its security mechanisms are explained.
 For simplicity, we will only focus on control plane packets within an ISD and not between core ASes of different ISDs.
 The interested reader can find more information in Chapter 4 of the SCION book \cite{Perrig2022}.
 
+\newpage
 \subsubsection{Path Exploration}
 Path segments are discovered by using path-segment construction beacons (PCBs).
 These are special control plane packets that are always originated by a core AS and subsequently propagated to non-core child ASes.
@@ -119,7 +120,7 @@ This process, known as beaconing, is depicted in \cref{fig:scion_path_exploratio
 \subsubsection{PCB Format}
 Formally, a PCB is structured as follows:
 $$ PCB = \langle INF \parallel ASE_0 \parallel ASE_1 \parallel \ldots \parallel ASE_n \rangle $$
-
+\newpage
 The PCB comprises an info field $INF$ and a series of AS entries $ASE_i$, where each $ASE_i$ contains all path-related information for the $i$-th traversed AS.
 The info field is defined as:
 $$ INF = \langle Flags_{INF} \parallel SegID \parallel TS \rangle $$
@@ -151,7 +152,7 @@ $$\Sigma_i = \text{Sign}_{K_i} \bigl( INF \parallel ASE_0 \parallel \dots \paral
 As previously mentioned, the $HFAuth$ value authenticates the hop field.
 This section illustrated how the MAC value also authenticates all previously traversed hops.
 
-Consider a PCB traversing the ASes $AS_0, \dots, AS_n$ with their corresponding secret keys $K_0, \dots, K_n$
+Consider a PCB traversing the ASes $AS_0, \dots, AS_n$ with their corresponding secret keys $K_0, \dots, K_n$.
 The core AS $AS_0$ initiates the beaconing process by sampling a random value, i.e., the segment identifier:
 
 $$ SegID = \beta_0 = Random() $$
@@ -172,7 +173,7 @@ Therefore, each router continuously updates the $SegID$ to reflect the value of 
 
 \subsubsection{Path-segment Registration}
 Path segments are derived from PCBs and must be registered first before they can be utilized by the end hosts.
-From the stored PCBs, the up- and down segments get created:
+From the stored PCBs, the up- and down segments get created.
 Since these path segments start or end at the local AS, the selected PCB has to be modified accordingly:
 The $Next$ field and the $ConsEgress$ field in the hop field are cleared, and afterwards, the MAC is recomputed on these modified PCBs.
 The up-segments are forwarded to the local path service, while the down-segments are sent to the path service of the core AS that originated the PCB.
@@ -195,6 +196,7 @@ Given that these messages can lead to significant decisions, their authenticatio
 The SCION specification mandates that all SCMP error messages must be authenticated with DRKey (see \cref{sec:drkey} for more details).
 Authentication on SCMP informational messages is optional; however, responses must be authenticated if and only if the request was authenticated.
 
+\newpage
 \subsection{Data Plane}
 Delivering network packets in SCION between end hosts is managed by the data plane.
 It is path-aware and utilizes the path information embedded in the packet header to forward the packets to the next hop.
@@ -260,6 +262,7 @@ The path meta header consists of the indices of the current info field $CurrINF$
 
 The flags field in the info field include the $ConsDir$ single-bit flag, which indicates whether the corresponding path segment is traversed in the direction of construction (i.e., beaconing) or in the reverse direction.
 
+\newpage
 \subsubsection{Path Construction and Reversal}
 
 \cref{fig:scion_path_header_contruction} illustrates the construction of the path header from the individual path segments.
@@ -267,9 +270,9 @@ Following the path meta header up to three info fields are included.
 Their order is fixed and corresponds to the info field of the up-, core-, and down-segments.
 Subsequently, the hop fields are added in the order of the path segments.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{figures/scion_path_header_construction.png}
+    \includegraphics[width=0.55\textwidth]{figures/scion_path_header_construction.png}
     \caption{Construction of the path header out of the path segments \cite[Section 5.4]{Perrig2022}.}
     \label{fig:scion_path_header_contruction}
 \end{figure}
@@ -335,7 +338,7 @@ In this section, we will cover the most important security mechanisms in SCION.
 
 \subsubsection{Control Plane PKI (CP-PKI)}
 \label{sec:cp_pki}
-As mention in the \cref{sec:control_plane}, control plane packets, especially PCB are authenticated and contain a signature.
+As mentioned in the \cref{sec:control_plane}, control plane packets, especially PCB are authenticated and contain a signature.
 This authentication relies on the control plane public key infrastructure (CP-PKI) of SCION.
 Here, we provide only a brief overview of the CP-PKI; detailed information can be found in Section 3.1 of the SCION book \cite{Perrig2022}.
 
@@ -403,7 +406,6 @@ Additionally, SPAO also provides integrity protection of the packet.
 To achieve this, different algorithms are supported.
 The specific algorithms and further details on SPAO can be found in the SCION book or on the official documentation website \cite{anapayaSCIONPacket}.
 
-
 \section{Anapaya}
 \label{sec:anapaya}
 In this section, we will introduce Anapaya, a company that provides SCION services.
@@ -422,7 +424,7 @@ Other components, such as a management system, are exclusively distributed to An
 In the following, a brief overview of the different Anapaya solutions is provided.
 The information is based on the official Anapaya website \cite{anapayaHomepage} and their documentation \cite{anapayaDocs}.
 Each of these solutions contain two software packages:
-One packages defines the SCION software, its components, and configuration.
+One package defines the SCION software, its components, and configuration.
 The other package includes system configuration, such as installed software and its  specific settings.
 
 \subsubsection{Anapaya CORE}
@@ -446,12 +448,12 @@ The Anapaya GATE solution is operated by ISPs and incorporates the SCION-IP gate
 It allows companies to announce certain services exclusively on the SCION network, thereby preventing DDoS, intrusion, and other attacks from the traditional Internet.
 Typical users of the Anapaya GATE product include employees working from remote or trusted parties who otherwise do not have SCION access.
 These trusted users are directed to the Anapaya GATE of the ISP, which then forwards the traffic to the Anapaya EDGE of the end customer.
-Communication from remote users to the Anapaya GATE use standard IP traffic, whereas communication between the Anapaya GATE and the Anapaya EDGE is done over SCION.
+Communication from remote users to the Anapaya GATE uses standard IP traffic, whereas communication between the Anapaya GATE and the Anapaya EDGE is done over SCION.
 
 \subsection{Cyber-Defence Campus}
 The Cyber-Defence Campus is also a customer of Anapaya and uses SCION for their research.
 At their locations in Lausanne, Thun, and Zurich Anapaya EDGE devices are deployed.
-Further details on their SCION network setup can be found in \cref{sec:setup}
+Further details on their SCION network setup can be found in \cref{sec:setup}.
 
 
 
@@ -476,7 +478,7 @@ Compliance scan checks if the target device adheres to specific standards, such 
 
 Other tools, such as SSH audit \cite{sshaudit}, focus on specific services, in this case SSH.
 They check the configuration of the service and provide recommendations for improving its security.
-
+\newpage
 
 \subsection{Manual Testing}
 Manual testing is a more time-consuming and complex process compared to automatic scanning tools.
