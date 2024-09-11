@@ -5,3 +5,14 @@ CYD
 Perrig
 
 Nessus
+beaconing
+Cyber-Defence
+ASes
+ISDs
+DRKey
+SPAO
+TRex
+scapy
+AES-CMAC
+Diffie-Hellman
+DHEat

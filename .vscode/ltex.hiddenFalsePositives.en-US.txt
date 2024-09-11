@@ -1,1 +1,2 @@
 {"rule":"AS_ADJ_AS","sentence":"^\\QIf the destination application reverses the path information of the initial packet to send the reply, the response will return to the source AS rather than the spoofed one.\\E$"}
+{"rule":"PHRASE_REPETITION","sentence":"^\\QPath meta header Info field (up) Info field (core) Info field (down) Hop field Hop field SCION header format, based on Figure 5.2 of the SCION book \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
